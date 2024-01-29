@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "labproject"
+version = "0.1"
+
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "torch"
+]
+
+[project.optional-dependencies]
+docs = [
+    "mkdocs",
+    # Newer versions currently produce a "'mermaid.js' is undefined" error, see https://github.com/danielfrg/mkdocs-jupyter/issues/176
+    "mkdocs-jupyter==0.24.2"
+]
+
+[tool.setuptools.packages.find]
+include=["labproject"]
