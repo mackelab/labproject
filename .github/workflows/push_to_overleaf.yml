@@ -1,0 +1,28 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout python project on Github
+        uses: actions/checkout@v4
+        with:
+          path: labproject/
+      - name: Checkout Overleaf project
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.OVERLEAF_GIT_CLONE_URL }}
+          path: overleaf/
+      - run: |
+          cd labproject/
+          python3 -m pip install --upgrade pip
+          pip install -e ".[docs]"
+          python3 labproject/run.py
+          cd ..
+          cp -r labproject/plots/* overleaf/figures/
+      - name: Commit and push changes to Overleaf
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: "Github Actions"
+          author_email: ""
+          cwd: 'overleaf/'
+          add: 'figures/'
+          message: "Update figures automatically"
