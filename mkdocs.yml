@@ -1,0 +1,8 @@
+site_name: Distribution Metrics for Evaluating Generative Models in Science
+
+nav:
+   - Home: index.md
+   - Example notebook: notebooks/example.ipynb
+
+plugins:
+    - mkdocs-jupyter
