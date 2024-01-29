@@ -1,3 +1,8 @@
+name: 'Push plots to Overleaf'
+on:
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
