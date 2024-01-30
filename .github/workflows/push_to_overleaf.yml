@@ -23,6 +23,8 @@ jobs:
           cd ${{ github.workspace }}
           python3 labproject/run.py
           cd ../..
+          pwd
+          ls -lah
           cp -r labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
         uses: EndBug/add-and-commit@v7
