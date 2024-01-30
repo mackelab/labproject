@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Overleaf project
-          run: |
-            git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
-            echo "$PWD"
+        run: |
+          git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
+          echo "$PWD"
       - name: Checkout python project on Github
         uses: actions/checkout@v4
       - name: Install dependencies
