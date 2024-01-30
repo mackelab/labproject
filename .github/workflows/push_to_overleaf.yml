@@ -16,7 +16,16 @@ jobs:
           ls -lah
       - name: Checkout python project on Github
         uses: actions/checkout@v4
+      - name: Cache dependency
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: Install dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
           cd ${{ github.workspace }}
           python3 -m pip install --upgrade pip
