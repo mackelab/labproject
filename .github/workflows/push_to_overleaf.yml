@@ -39,12 +39,15 @@ jobs:
           ls -lah
           ls -lah labproject/
           cp labproject/plots/* overleaf/figures/
-      - name: Commit and push changes to Overleaf
+      - name: Setup overleaf git and add changes
         run: |
             cd ${{ github.workspace }}
             cd ../overleaf/
             git config --global user.name "Github Actions"
             git config --global user.email ""
             git add figures/
+      - name: Commit and push changes to Overleaf if new figures were produced
+        if: ${{ git diff --cached --exit-code }}
+        run: |
             git commit -m "Update figures automatically"
             git push
