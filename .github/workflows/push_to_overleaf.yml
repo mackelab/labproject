@@ -28,7 +28,8 @@ jobs:
           cd ..
           pwd
           ls -lah
-          cp -r labproject/plots/* overleaf/figures/
+          ls -lah labproject/
+          cp labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
         uses: EndBug/add-and-commit@v7
         with:
