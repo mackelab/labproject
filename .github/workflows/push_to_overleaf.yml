@@ -9,8 +9,6 @@ jobs:
     steps:
       - name: Checkout python project on Github
         uses: actions/checkout@v4
-        with:
-          path: labproject/
       - name: Checkout Overleaf project
         run: git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
       - name: Install dependencies
@@ -23,7 +21,7 @@ jobs:
           cd ${{ github.workspace }}/labproject/
           python3 labproject/run.py
           cd ..
-          cp -r labproject/labproject/plots/* overleaf/figures/
+          cp -r labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
         uses: EndBug/add-and-commit@v7
         with:
