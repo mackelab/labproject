@@ -39,15 +39,16 @@ jobs:
           ls -lah
           ls -lah labproject/
           cp labproject/plots/* overleaf/figures/
-      - name: Setup overleaf git and add changes
+      - name: Commit and push changes to Overleaf
         run: |
             cd ${{ github.workspace }}
             cd ../overleaf/
             git config --global user.name "Github Actions"
             git config --global user.email ""
             git add figures/
-      - name: Commit and push changes to Overleaf if new figures were produced
-        if: ${{ git diff --cached --exit-code }}
-        run: |
-            git commit -m "Update figures automatically"
-            git push
+            if [ -z "$(git status --untracked-files=no --porcelain)" ]; then 
+              echo "No changes to commit"; 
+            else
+              git commit -m "Update figures automatically"
+              git push
+            fi
