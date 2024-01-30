@@ -7,12 +7,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Overleaf project
+          run: |
+            git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
+            echo "$PWD"
       - name: Checkout python project on Github
         uses: actions/checkout@v4
-      - name: Checkout Overleaf project
-        run: |
-          git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
-          echo "$PWD"
       - name: Install dependencies
         run: |
           cd ${{ github.workspace }}
@@ -22,7 +22,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           python3 labproject/run.py
-          cd ..
+          cd ../..
           cp -r labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
         uses: EndBug/add-and-commit@v7
