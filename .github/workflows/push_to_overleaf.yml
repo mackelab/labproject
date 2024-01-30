@@ -12,11 +12,9 @@ jobs:
         with:
           path: labproject/
       - name: Checkout Overleaf project
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ secrets.OVERLEAF_GIT_CLONE_URL }}
-          path: overleaf/
-      - run: |
+        run: git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
+      - name: Run experiments and generate plots
+        run: |
           cd labproject/
           python3 -m pip install --upgrade pip
           pip install -e ".[docs]"
