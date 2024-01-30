@@ -9,8 +9,10 @@ jobs:
     steps:
       - name: Checkout Overleaf project
         run: |
+          cd ${{ github.workspace }}
           git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
-          echo "$PWD"
+          pwd
+          ls -lah
       - name: Checkout python project on Github
         uses: actions/checkout@v4
       - name: Install dependencies
@@ -22,7 +24,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           python3 labproject/run.py
-          cd ../..
+          cd ..
           pwd
           ls -lah
           cp -r labproject/plots/* overleaf/figures/
