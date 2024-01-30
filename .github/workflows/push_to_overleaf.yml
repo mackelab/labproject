@@ -10,6 +10,7 @@ jobs:
       - name: Checkout Overleaf project
         run: |
           cd ${{ github.workspace }}
+          cd ..
           git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
           pwd
           ls -lah
