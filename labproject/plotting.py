@@ -5,5 +5,5 @@ def plot_scaling_metric_dimensionality(dimensionality, distances, metric_name, d
     plt.xlabel("Dimensionality")
     plt.ylabel(metric_name)
     plt.title(f"{metric_name} with increasing dimensionality for {dataset_name}")
-    plt.savefig(f"../plots/{metric_name.lower().replace(' ','_')}_dimensionality_{dataset_name.lower().replace(' ','_')}.png")
+    plt.savefig(f"plots/{metric_name.lower().replace(' ','_')}_dimensionality_{dataset_name.lower().replace(' ','_')}.png")
     plt.close()
