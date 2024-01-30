@@ -31,10 +31,11 @@ jobs:
           ls -lah labproject/
           cp labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: "Github Actions"
-          author_email: ""
-          cwd: 'overleaf/'
-          add: 'figures/'
-          message: "Update figures automatically"
+        run: |
+            cd ${{ github.workspace }}
+            cd ../overleaf/
+            git config --global user.name "Github Actions"
+            git config --global user.email ""
+            git add figures/
+            git commit -m "Update figures automatically"
+            git push
