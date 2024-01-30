@@ -12,8 +12,6 @@ jobs:
           cd ${{ github.workspace }}
           cd ..
           git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
-          pwd
-          ls -lah
       - name: Checkout python project on Github
         uses: actions/checkout@v4
       - name: Cache dependency
@@ -29,15 +27,15 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           python3 -m pip install --upgrade pip
+      - name: Install labproject
+        run: |
+          cd ${{ github.workspace }}
           pip install -e ".[docs]"
       - name: Run experiments and generate plots
         run: |
           cd ${{ github.workspace }}
           python3 labproject/run.py
           cd ..
-          pwd
-          ls -lah
-          ls -lah labproject/
           cp labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
         run: |
