@@ -15,12 +15,12 @@ jobs:
         run: git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
       - name: Install dependencies
         run: |
-          cd /labproject/
+          cd ~/labproject/
           python3 -m pip install --upgrade pip
           pip install -e ".[docs]"
       - name: Run experiments and generate plots
         run: |
-          cd /labproject/
+          cd ~/labproject/
           python3 labproject/run.py
           cd ..
           cp -r labproject/labproject/plots/* overleaf/figures/
