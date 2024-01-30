@@ -13,14 +13,17 @@ jobs:
           path: labproject/
       - name: Checkout Overleaf project
         run: git clone ${{ secrets.OVERLEAF_GIT_CLONE_URL }} overleaf/
-      - name: Run experiments and generate plots
+      - name: Install dependencies
         run: |
-          cd labproject/
+          cd /labproject/
           python3 -m pip install --upgrade pip
           pip install -e ".[docs]"
+      - name: Run experiments and generate plots
+        run: |
+          cd /labproject/
           python3 labproject/run.py
           cd ..
-          cp -r labproject/plots/* overleaf/figures/
+          cp -r labproject/labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
         uses: EndBug/add-and-commit@v7
         with:
