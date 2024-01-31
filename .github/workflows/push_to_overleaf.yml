@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+runs-on: self-hosted
 jobs:
   build:
     runs-on: ubuntu-latest
