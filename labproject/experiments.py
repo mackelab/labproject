@@ -22,28 +22,13 @@ def scaling_kl_samples(dataset1, dataset2):
     return dimensionality, distances
 
 
+def run_metric_on_datasets(dataset1, dataset2, metric):
+    return metric(dataset1, dataset2)
+
+
 class Experiment:
     def __init__(self):
         pass
 
     def run_experiment(self, dataset1, dataset2, experiment_fn):
         return experiment_fn(dataset1, dataset2)
-
-
-if __name__ == "__main__":
-
-    experiment = Experiment()
-
-    experiment_results = {}
-    # for exp_name in ['scaling_sliced_wasserstein_samples', 'scaling_kl_samples']:
-    for exp_name in ["scaling_kl_samples"]:
-        for i_d1, dataset1 in enumerate([random_dataset(n=100000, d=100)]):
-            for i_d2, dataset2 in enumerate([random_dataset(n=100000, d=100)]):
-                experiment_fn = globals()[exp_name]
-                dimensionality, distances = experiment.run_experiment(
-                    dataset1=dataset1, dataset2=dataset2, experiment_fn=experiment_fn
-                )
-                experiment_results[(exp_name, i_d1, i_d2)] = (dimensionality, distances)
-    # single plot
-    # plot_scaling_metric_dimensionality(dimensionality, distances, "Sliced Wasserstein", "Random Dataset")
-    plot_scaling_metric_dimensionality(dimensionality, distances, "KL", "Random Dataset")
