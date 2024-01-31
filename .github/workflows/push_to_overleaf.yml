@@ -46,3 +46,9 @@ jobs:
               git commit -m "Update figures automatically"
               git push
             fi
+      - name: Clean up - delete repositories
+        run: |
+          cd ${{ github.workspace }}
+          cd ..
+          rm -rf overleaf/
+          rm -rf github/
