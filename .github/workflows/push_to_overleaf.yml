@@ -7,6 +7,12 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
+      - name: Clean up before run (delete repositories)
+        run: |
+          cd ${{ github.workspace }}
+          cd ..
+          rm -rf overleaf/
+          rm -rf github/
       - name: Checkout Overleaf project
         run: |
           cd ${{ github.workspace }}
@@ -15,6 +21,7 @@ jobs:
       - name: Checkout python project on Github
         uses: actions/checkout@v4
       - name: Cache dependency
+        if: "contains(runner.name, 'GitHub Actions')"
         id: cache-dependencies
         uses: actions/cache@v4
         with:
@@ -46,9 +53,3 @@ jobs:
               git commit -m "Update figures automatically"
               git push
             fi
-      - name: Clean up - delete repositories
-        run: |
-          cd ${{ github.workspace }}
-          cd ..
-          rm -rf overleaf/
-          rm -rf github/
