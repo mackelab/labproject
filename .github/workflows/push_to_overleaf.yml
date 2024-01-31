@@ -9,7 +9,6 @@ jobs:
     steps:
       - name: Clean up before run (delete repositories)
         run: |
-          echo ${{ runner.name }}
           cd ${{ github.workspace }}
           cd ..
           rm -rf overleaf/
@@ -22,7 +21,7 @@ jobs:
       - name: Checkout python project on Github
         uses: actions/checkout@v4
       - name: Cache dependency
-        if: ${{ runner.name }} == 'GitHub Actions*'
+        if: "contains(runner.name, 'GitHub Actions')"
         id: cache-dependencies
         uses: actions/cache@v4
         with:
