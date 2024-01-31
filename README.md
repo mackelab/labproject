@@ -12,6 +12,9 @@ conda activate labproject
 pip install -e .
 # if you want to edit the tutorials, install the docs dependencies
 pip install -e ".[docs]"
+
+# install pre-commit hooks for black auto-formatting
+pre-commit install
 ```
 
 `pip install -e .` installs the labproject package in editable mode, i.e. changes to the code are immediately reflected in the package.
