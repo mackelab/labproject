@@ -1,7 +1,7 @@
 import torch
-from data import random_dataset
-from metrics.sliced_wasserstein import sliced_wasserstein_distance
-from plotting import plot_scaling_metric_dimensionality
+from labproject.data import random_dataset
+from labproject.metrics.sliced_wasserstein import sliced_wasserstein_distance
+from labproject.plotting import plot_scaling_metric_dimensionality
 
 def scaling_sliced_wasserstein_samples():
     dataset1 = random_dataset(d=1000)
