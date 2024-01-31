@@ -1,8 +1,19 @@
 site_name: Distribution Metrics for Evaluating Generative Models in Science
 
 nav:
-   - Home: index.md
-   - Example notebook: notebooks/example.ipynb
+  - Home: index.md
+  - Example notebook: notebooks/example.ipynb
+  - FID notebook: notebooks/fid.ipynb
+  - API Reference: api.md
+
 
 plugins:
-    - mkdocs-jupyter
+  - search
+  - mkdocs-jupyter
+  - mkdocstrings:
+      watch:
+        - labproject
+      handlers:
+        python:
+          rendering:
+            show_source: true
