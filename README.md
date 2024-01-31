@@ -9,9 +9,7 @@ conda create -n labproject python=3.9
 conda activate labproject
 
 # install labproject package with dependencies
-pip install -e .
-# if you want to edit the tutorials, install the docs dependencies
-pip install -e ".[docs]"
+pip install -e ".[dev,docs]"
 
 # install pre-commit hooks for black auto-formatting
 pre-commit install

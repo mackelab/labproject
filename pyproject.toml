@@ -7,9 +7,6 @@ name = "labproject"
 version = "0.1"
 
 dependencies = [
-    "black",
-    "pre-commit",
-    "jupyter",
     "numpy",
     "scipy",
     "matplotlib",
@@ -21,6 +18,11 @@ docs = [
     "mkdocs",
     # Newer versions currently produce a "'mermaid.js' is undefined" error, see https://github.com/danielfrg/mkdocs-jupyter/issues/176
     "mkdocs-jupyter==0.24.2"
+]
+dev = [
+    "black",
+    "pre-commit",
+    "jupyter"
 ]
 
 [tool.setuptools.packages.find]
