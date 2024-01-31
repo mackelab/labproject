@@ -7,9 +7,13 @@ name = "labproject"
 version = "0.1"
 
 dependencies = [
+    "black",
+    "pre-commit",
+    "jupyter",
     "numpy",
+    "scipy",
     "matplotlib",
-    "torch"
+    "torch",
 ]
 
 [project.optional-dependencies]
@@ -21,3 +25,15 @@ docs = [
 
 [tool.setuptools.packages.find]
 include=["labproject"]
+
+# Black Configuration
+[tool.black]
+line-length = 100  # Example: set the line length to 100
+
+# Pre-commit Configuration
+[[tool.pre-commit.repos]]
+repo = "https://github.com/psf/black"
+rev = "stable"
+hooks = [
+    { id = "black", language_version = "python3" }
+]
