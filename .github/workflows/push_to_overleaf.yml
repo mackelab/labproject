@@ -32,7 +32,6 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           python3 -m pip install --upgrade pip
-          pip -V
           pip install -e ".[docs]"
       - name: Run experiments and generate plots
         run: |
