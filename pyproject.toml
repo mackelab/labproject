@@ -8,8 +8,9 @@ version = "0.1"
 
 dependencies = [
     "numpy",
+    "scipy",
     "matplotlib",
-    "torch"
+    "torch",
 ]
 
 [project.optional-dependencies]
