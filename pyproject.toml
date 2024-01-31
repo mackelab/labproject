@@ -17,7 +17,8 @@ dependencies = [
 docs = [
     "mkdocs",
     # Newer versions currently produce a "'mermaid.js' is undefined" error, see https://github.com/danielfrg/mkdocs-jupyter/issues/176
-    "mkdocs-jupyter==0.24.2"
+    "mkdocs-jupyter==0.24.2",
+    "mkdocstrings[python]>=0.18"
 ]
 dev = [
     "black",
