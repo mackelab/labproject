@@ -1,8 +1,10 @@
 # STOLEN from Julius: https://github.com/mackelab/wasserstein_source/blob/main/wasser/sliced_wasserstein.py
 
 import numpy as np
+
 np.random.seed(0)
 import torch
+
 torch.manual_seed(0)
 
 
@@ -19,8 +21,7 @@ def rand_projections(embedding_dim, num_samples: int):
     """
 
     projection = [
-        w / np.sqrt((w**2).sum())
-        for w in np.random.normal(size=(num_samples, embedding_dim))
+        w / np.sqrt((w**2).sum()) for w in np.random.normal(size=(num_samples, embedding_dim))
     ]
     projection = np.array(projection)
     return torch.from_numpy(projection).type(torch.FloatTensor)
@@ -49,9 +50,7 @@ def sliced_wasserstein_distance(
 
     encoded_projections = encoded_samples.matmul(projections.transpose(-2, -1))
 
-    distribution_projections = distribution_samples.matmul(
-        projections.transpose(-2, -1)
-    )
+    distribution_projections = distribution_samples.matmul(projections.transpose(-2, -1))
 
     wasserstein_distance = (
         torch.sort(encoded_projections.transpose(-2, -1), dim=-1)[0]

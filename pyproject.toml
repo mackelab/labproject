@@ -7,9 +7,6 @@ name = "labproject"
 version = "0.1"
 
 dependencies = [
-    "black",
-    "pre-commit",
-    "jupyter",
     "numpy",
     "scipy",
     "matplotlib",
@@ -22,6 +19,11 @@ docs = [
     # Newer versions currently produce a "'mermaid.js' is undefined" error, see https://github.com/danielfrg/mkdocs-jupyter/issues/176
     "mkdocs-jupyter==0.24.2"
 ]
+dev = [
+    "black",
+    "pre-commit",
+    "jupyter"
+]
 
 [tool.setuptools.packages.find]
 include=["labproject"]
@@ -33,7 +35,7 @@ line-length = 100  # Example: set the line length to 100
 # Pre-commit Configuration
 [[tool.pre-commit.repos]]
 repo = "https://github.com/psf/black"
-rev = "stable"
+rev = "24.1.1"
 hooks = [
     { id = "black", language_version = "python3" }
 ]
