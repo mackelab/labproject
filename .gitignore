@@ -139,7 +139,10 @@ figures/
 *.sublime-workspace
 *.sublime-project
 
-# Jupyter notebooks
+# ignore jupyter notebooks
 *.ipynb
+
+# except those in docs/notebooks
+!docs/notebooks/*.ipynb
 
 .idea/
