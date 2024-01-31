@@ -35,7 +35,7 @@ line-length = 100  # Example: set the line length to 100
 # Pre-commit Configuration
 [[tool.pre-commit.repos]]
 repo = "https://github.com/psf/black"
-rev = "stable"
+rev = "24.1.1"
 hooks = [
     { id = "black", language_version = "python3" }
 ]
