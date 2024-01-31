@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: Clean up before run (delete repositories)
         run: |
+          echo ${{ runner.name }}
           cd ${{ github.workspace }}
           cd ..
           rm -rf overleaf/
