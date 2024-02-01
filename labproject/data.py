@@ -1,7 +1,11 @@
 import torch
 import requests
 from requests.auth import HTTPBasicAuth
-from secrets import STORAGE_BOX_URL, USERNAME, PASSWORD  # variables from secrets.py
+import os
+
+STORAGEBOX_URL = os.getenv("HETZNER_STORAGEBOX_URL")
+HETZNER_STORAGEBOX_USERNAME = os.getenv("HETZNER_STORAGEBOX_USERNAME")
+HETZNER_STORAGEBOX_PASSWORD = os.getenv("HETZNER_STORAGEBOX_PASSWORD")
 
 torch.manual_seed(0)
 
@@ -22,8 +26,8 @@ def upload_file(local_path, remote_path):
     ```
 
     """
-    url = f"{STORAGE_BOX_URL}/remote.php/dav/files/{USERNAME}/{remote_path}"
-    auth = HTTPBasicAuth(USERNAME, PASSWORD)
+    url = f"{STORAGEBOX_URL}/remote.php/dav/files/{HETZNER_STORAGEBOX_USERNAME}/{remote_path}"
+    auth = HTTPBasicAuth(HETZNER_STORAGEBOX_USERNAME, HETZNER_STORAGEBOX_PASSWORD)
     with open(local_path, "rb") as f:
         data = f.read()
     response = requests.put(url, data=data, auth=auth)
@@ -43,8 +47,8 @@ def download_file(remote_path, local_path):
         print("Download failed")
     ```
     """
-    url = f"{STORAGE_BOX_URL}/remote.php/dav/files/{USERNAME}/{remote_path}"
-    auth = HTTPBasicAuth(USERNAME, PASSWORD)
+    url = f"{STORAGEBOX_URL}/remote.php/dav/files/{HETZNER_STORAGEBOX_USERNAME}/{remote_path}"
+    auth = HTTPBasicAuth(HETZNER_STORAGEBOX_USERNAME, HETZNER_STORAGEBOX_PASSWORD)
     response = requests.get(url, auth=auth)
     if response.status_code == 200:
         with open(local_path, "wb") as f:
