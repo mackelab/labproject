@@ -146,3 +146,5 @@ figures/
 !docs/notebooks/*.ipynb
 
 .idea/
+
+secrets.py
