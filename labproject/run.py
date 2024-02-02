@@ -1,10 +1,13 @@
 from labproject.experiments import *
 from labproject.plotting import *
+from labproject.utils import set_seed
+
 import time
 
 if __name__ == "__main__":
 
     print("Running experiments...")
+    set_seed(42)
     experiment = Experiment()
 
     experiment_results = {}
