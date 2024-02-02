@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
 import os
 
-plots_path = "plots/"
+# Load matplotlibrc file
+plt.style.use("../matplotlibrc")
+
+PLOT_PATH = "../plots/"
 
 
 def plot_scaling_metric_dimensionality(dimensionality, distances, metric_name, dataset_name):
@@ -11,7 +14,7 @@ def plot_scaling_metric_dimensionality(dimensionality, distances, metric_name, d
     plt.title(f"{metric_name} with increasing dimensionality for {dataset_name}")
     plt.savefig(
         os.path.join(
-            plots_path,
+            PLOT_PATH,
             f"{metric_name.lower().replace(' ', '_')}_dimensionality_{dataset_name.lower().replace(' ', '_')}.png",
         )
     )

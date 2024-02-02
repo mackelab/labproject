@@ -1,12 +1,7 @@
 # STOLEN from Julius: https://github.com/mackelab/wasserstein_source/blob/main/wasser/sliced_wasserstein.py
 
 import numpy as np
-
-np.random.seed(0)
 import torch
-
-torch.manual_seed(0)
-
 
 def rand_projections(embedding_dim, num_samples: int):
     """
