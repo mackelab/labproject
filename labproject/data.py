@@ -2,15 +2,17 @@ import torch
 import requests
 from requests.auth import HTTPBasicAuth
 import os
+import functools
+
 
 STORAGEBOX_URL = os.getenv("HETZNER_STORAGEBOX_URL")
 HETZNER_STORAGEBOX_USERNAME = os.getenv("HETZNER_STORAGEBOX_USERNAME")
 HETZNER_STORAGEBOX_PASSWORD = os.getenv("HETZNER_STORAGEBOX_PASSWORD")
 
-torch.manual_seed(0)
 
 ## Hetzner Storage Box API functions ----
 
+DATASETS = {}
 
 def upload_file(local_path, remote_path):
     """
@@ -56,10 +58,57 @@ def download_file(remote_path, local_path):
         return True
     return False
 
+def register_dataset(name:str) -> callable:
+    """This decorator wrapps a function that should return a dataset and ensures that the dataset is a PyTorch tensor, with the correct shape.
+
+    Args:
+        func (callable): Dataset generator function
+
+    Returns:
+        callable: Dataset generator function wrapper
+    """
+    
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(n: int, d: int, **kwargs):
+            
+            assert n > 0, "n must be a positive integer"
+            assert d > 0, "d must be a positive integer"
+            
+            # Call the original function
+            dataset = func(n,d, **kwargs)
+            
+            # Convert the dataset to a PyTorch tensor
+            dataset = torch.Tensor(dataset) if not isinstance(dataset, torch.Tensor) else dataset
+            
+            assert dataset.shape == (n, d), f"Dataset shape must be {(n, d)}"
+            
+            return dataset
+
+        DATASETS[name] = wrapper
+        return wrapper
+    return decorator
+
+def get_dataset(name: str) -> torch.Tensor:
+    """Get a dataset by name
+
+    Args:
+        name (str): Name of the dataset
+        n (int): Number of samples
+        d (int): Dimensionality of the samples
+
+    Returns:
+        torch.Tensor: Dataset
+    """
+    assert name in DATASETS, f"Dataset {name} not found, please register it first "
+    return DATASETS[name]
 
 # ------------------------------
 
 
 ## Data functions ----
+# This will be an arbitrary function, returning a numric array and can be registered as a dataset as follows:
+
+@register_dataset("random")
 def random_dataset(n=1000, d=10):
     return torch.randn(n, d)
