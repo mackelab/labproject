@@ -57,8 +57,3 @@ jobs:
               git commit -m "Update figures automatically"
               git push
             fi
-      - name: Update documentation
-        run: |
-          cd ${{ github.workspace }}
-          mkdocs build
-          mkdocs gh-deploy
