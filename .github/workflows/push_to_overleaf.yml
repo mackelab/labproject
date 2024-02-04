@@ -41,13 +41,13 @@ jobs:
           for script in run_*.py; do
             python "$script"
           done
-          cd ..
-          cp labproject/plots/* overleaf/figures/
         shell: /usr/bin/bash -e {0}
       - name: Commit and push changes to Overleaf
         run: |
             cd ${{ github.workspace }}
-            cd ../overleaf/
+            cd ..
+            cp labproject/plots/* overleaf/figures/
+            cd overleaf/
             git config --global user.name "Github Actions"
             git config --global user.email ""
             git add figures/
