@@ -40,6 +40,13 @@ jobs:
           python3 labproject/run.py
           cd ..
           cp labproject/plots/* overleaf/figures/
+     - name: Check for Errors
+        run: |
+          if [ $? -ne 0 ]; then
+            echo "One or more scripts failed."
+            exit 1
+          fi
+
       - name: Commit and push changes to Overleaf
         run: |
             cd ${{ github.workspace }}
