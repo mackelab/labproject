@@ -12,6 +12,7 @@ dependencies = [
     "matplotlib",
     "torch",
     "OmegaConf",
+    "torchvision",
 ]
 
 [project.optional-dependencies]
