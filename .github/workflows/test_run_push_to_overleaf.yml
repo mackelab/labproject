@@ -57,3 +57,16 @@ jobs:
               git commit -m "Update figures automatically"
               git push
             fi
+
+      # New step to build the MkDocs site
+      - name: Build MkDocs Site
+        run: |
+          cd ${{ github.workspace }}
+          mkdocs build
+
+      # New step to deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site

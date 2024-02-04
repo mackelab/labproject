@@ -25,7 +25,7 @@ Develop code in your desired way, e.g. in local notebooks (you don't commit, the
 
 Once you want other people to see your figure/experiment, add them to `plotting.py` and `experiments.py` and call the corresponding functions in `run.py`. 
 
-After committing and pushing your changes, GitHub will execute `run.py` and update the figures in Overleaf. 
+After committing and pushing your changes, GitHub will execute every `run_*.py` and update the figures in Overleaf. 
 
 You can obviously also run it yourself with `python labproject/run.py`.
 
