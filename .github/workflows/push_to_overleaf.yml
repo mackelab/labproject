@@ -35,6 +35,7 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -e ".[docs]"
       - name: Run experiments and generate plots
+        shell: bash
         run: |
           cd ${{ github.workspace }}
           for script in run_*.py; do
