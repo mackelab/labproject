@@ -37,11 +37,9 @@ jobs:
       - name: Run experiments and generate plots
         run: |
           cd ${{ github.workspace }}
-          shopt -s nullglob
           for script in run_*.py; do
             python "$script"
           done
-        shell: /usr/bin/bash -e {0}
       - name: Commit and push changes to Overleaf
         run: |
             cd ${{ github.workspace }}
