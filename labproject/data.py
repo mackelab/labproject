@@ -23,7 +23,7 @@ HETZNER_STORAGEBOX_PASSWORD = os.getenv("HETZNER_STORAGEBOX_PASSWORD")
 ## Hetzner Storage Box API functions ----
 
 DATASETS = {}
-
+DISTRIBUTIONS = {}
 
 def upload_file(local_path: str, remote_path: str):
     r"""
@@ -130,6 +130,46 @@ def get_dataset(name: str) -> torch.Tensor:
     return DATASETS[name]
 
 
+def register_distribution(name: str) -> callable:
+    r"""This decorator wrapps a function that should return a dataset and ensures that the dataset is a PyTorch tensor, with the correct shape.
+
+    Args:
+        func (callable): Dataset generator function
+
+    Returns:
+        callable: Dataset generator function wrapper
+
+    Example:
+        >>> @register_dataset("random")
+        >>> def random_dataset(n=1000, d=10):
+        >>>     return torch.randn(n, d)
+    """
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            # Call the original function
+            distribution = func(*args, **kwargs)
+            return distribution
+
+        DISTRIBUTIONS[name] = wrapper
+        return wrapper
+
+    return decorator
+
+def get_distribution(name: str) -> torch.Tensor:
+    r"""Get a distribution by name
+
+    Args:
+        name (str): Name of the distribution
+
+    Returns:
+        torch.Tensor: Distribution
+    """
+    assert name in DISTRIBUTIONS, f"Distribution {name} not found, please register it first "
+    return DISTRIBUTIONS[name]
+
+
 def load_cifar10(
     n: int, save_path="data", train=True, batch_size=100, shuffle=False, num_workers=1, device="cpu"
 ) -> torch.Tensor:
@@ -184,6 +224,10 @@ def load_cifar10(
 @register_dataset("random")
 def random_dataset(n=1000, d=10):
     return torch.randn(n, d)
+
+@register_distribution("normal")
+def normal_distribution():
+    return torch.distributions.Normal(0,1)
 
 
 @register_dataset("toy_2d")
