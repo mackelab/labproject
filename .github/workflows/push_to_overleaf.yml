@@ -38,6 +38,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           for script in run_*.py; do
+            echo "$script"
             python "$script"
           done
           cd ..
