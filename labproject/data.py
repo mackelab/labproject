@@ -16,7 +16,7 @@ DATASETS = {}
 
 
 def upload_file(local_path: str, remote_path: str):
-    """
+    r"""
     Uploads a file to the Hetzner Storage Box.
 
     Args:
@@ -41,7 +41,7 @@ def upload_file(local_path: str, remote_path: str):
 
 
 def download_file(remote_path, local_path):
-    """
+    r"""
     Downloads a file from the Hetzner Storage Box.
 
     Args:
@@ -68,7 +68,7 @@ def download_file(remote_path, local_path):
 
 
 def register_dataset(name: str) -> callable:
-    """This decorator wrapps a function that should return a dataset and ensures that the dataset is a PyTorch tensor, with the correct shape.
+    r"""This decorator wrapps a function that should return a dataset and ensures that the dataset is a PyTorch tensor, with the correct shape.
 
     Args:
         func (callable): Dataset generator function
@@ -106,7 +106,7 @@ def register_dataset(name: str) -> callable:
 
 
 def get_dataset(name: str) -> torch.Tensor:
-    """Get a dataset by name
+    r"""Get a dataset by name
 
     Args:
         name (str): Name of the dataset

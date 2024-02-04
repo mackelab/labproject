@@ -1,29 +1,12 @@
 # STOLEN from Julius: https://github.com/mackelab/wasserstein_source/blob/main/wasser/sliced_wasserstein.py
+# Removed numpy dependency
 
-import numpy as np
 import torch
-
-def rand_projections(embedding_dim, num_samples: int):
-    """
-    This function generates num_samples random samples from the latent space's unti sphere.r
-
-    Args:
-        embedding_dim (int): dimention of the embedding
-        sum_samples (int): number of samples
-
-    Return :
-        torch.tensor: tensor of size (num_samples, embedding_dim)
-    """
-
-    projection = [
-        w / np.sqrt((w**2).sum()) for w in np.random.normal(size=(num_samples, embedding_dim))
-    ]
-    projection = np.array(projection)
-    return torch.from_numpy(projection).type(torch.FloatTensor)
+from torch import Tensor
 
 
 def sliced_wasserstein_distance(
-    encoded_samples, distribution_samples, num_projections=50, p=2, device="cpu"
+    encoded_samples: Tensor, distribution_samples: Tensor, num_projections:int=50, p:int=2, device:str="cpu"
 ):
     """
     Sliced Wasserstein distance between encoded samples and distribution samples
@@ -59,3 +42,32 @@ def sliced_wasserstein_distance(
 
     # return torch.pow(torch.mean(wasserstein_distance, dim=(-2, -1)), 1 / p)
     return torch.mean(wasserstein_distance, dim=(-2, -1))
+
+
+
+def rand_projections(embedding_dim: int, num_samples: int):
+    """
+    This function generates num_samples random samples from the latent space's unti sphere.r
+
+    Args:
+        embedding_dim (int): dimention of the embedding
+        sum_samples (int): number of samples
+
+    Return :
+        torch.tensor: tensor of size (num_samples, embedding_dim)
+    """
+
+    ws = torch.randn((num_samples, embedding_dim))
+    projection = ws / torch.norm(ws, dim=-1, keepdim=True)
+    return projection
+
+
+if __name__ == "__main__":
+    # Test
+    # Generate random samples
+    samples1 = torch.randn(100, 2)
+    samples2 = torch.randn(100, 2)
+    
+    # Compute sliced wasserstein distance
+    sw_distance = sliced_wasserstein_distance(samples1, samples2)
+    print(sw_distance)

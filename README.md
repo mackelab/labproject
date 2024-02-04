@@ -1,5 +1,8 @@
 
 ## Installation
+
+Please execute the following commands in your terminal to install the labproject package and its dependencies. We recommend using a conda environment to avoid conflicts with other packages.
+
 ```bash
 # clone the repository
 git clone https://github.com/mackelab/labproject.git
@@ -23,11 +26,16 @@ The environment now contains, `numpy`, `scipy`, `matplotlib`, `torch`, and `jupy
 
 Develop code in your desired way, e.g. in local notebooks (you don't commit them, they will be automatically ignored). The public notebooks i.e. for the website can be found in `docs/notebooks/`, if you want to share the whole notebook then move it in this directory.
 
-Once you want other people to see your figure/experiment, add them to `plotting.py` and `experiments.py` and call the corresponding functions in `run_{name}.py`. 
+### Metrics
+If you implemented a well-documented and reliable function that computes a metric, then move it to in `labproject/metrics` simply by add a new file `my_metric.py`.
 
+### Plotting
+If you implemented a nice plotting function, then move it to in `labproject/plotting.py`. Especially if it is applicable to multiple tasks.
+
+### Running experiments
 After committing and pushing your changes, GitHub will execute every `run_{name}.py` and update the figures in Overleaf. 
 
-You can obviously also run it yourself with `python labproject/run_{name}.py`.
+You can also run it yourself with `python labproject/run_{name}.py`. Any results, will however not be pushed into the repository.
 
 
 
@@ -52,14 +60,20 @@ To add your functions to the API documentation, add the following to `docs/api.m
 ```markdown
 ### Your module
 ::: labproject.your_module
+    options:
+      heading_level: 4
 ```
-Then run `mkdocs build` to update the documentation (or `mkdocs serve` to view it locally).
+To build it locally use `mkdocs build` (or `mkdocs serve` to view it locally). After pushing to the main branch, the documentation will be **automatically** updated.
 
 For adding new pages, create a new markdown file in `docs/` and add it to `mkdocs.yml`:
 ```yaml
 pages:
   - 'your_new_page.md'
 ```
+
+Every docstring in the code will be automatically added to the **API documentation**. We will use "Google Style" docstrings, see [here](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for an example.
+
+
 
 ### Notebooks
 The jupyter notebooks are found in `docs/notebooks/`.
