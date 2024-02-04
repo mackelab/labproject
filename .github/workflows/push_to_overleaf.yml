@@ -38,6 +38,7 @@ jobs:
         shell: bash
         run: |
           cd ${{ github.workspace }}
+          shopt -s nullglob
           for script in run_*.py; do
             python "$script"
           done
