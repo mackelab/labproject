@@ -30,17 +30,22 @@ def gaussian_squared_w2_distance(real_samples: Tensor, fake_samples: Tensor) -> 
 
     Returns:
         torch.Tensor: The KL divergence between the two Gaussian approximations.
-        
+
     References:
         [1] https://en.wikipedia.org/wiki/Wasserstein_metric
         [2] https://arxiv.org/pdf/1706.08500.pdf
-        
+
     Examples:
-        >>> real_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional 
-        >>> fake_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional 
-        >>> w2 = gaussian_squared_w2_distance(real_samples, fake_samples) 
-        >>> print(w2) 
+        >>> real_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional
+        >>> fake_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional
+        >>> w2 = gaussian_squared_w2_distance(real_samples, fake_samples)
+        >>> print(w2)
     """
+
+    # check input (n,d only)
+    assert len(real_samples.size()) == 2, "Real samples must be 2-dimensional, (n,d)"
+    assert len(fake_samples.size()) == 2, "Fake samples must be 2-dimensional, (n,d)"
+
     # calculate mean and covariance of real and fake samples
     mu_real = real_samples.mean(dim=0)
     mu_fake = fake_samples.mean(dim=0)
@@ -53,10 +58,9 @@ def gaussian_squared_w2_distance(real_samples: Tensor, fake_samples: Tensor) -> 
     cov_fake += torch.eye(cov_fake.size(0)) * eps
 
     # compute KL divergence
-    inv_cov_fake = torch.inverse(cov_fake)
     mean_dist = torch.norm(mu_real - mu_fake, p=2)
     cov_dist = torch.trace(cov_real + cov_fake - 2 * torch.linalg.cholesky(cov_real @ cov_fake))
-    w2_squared_dist = mean_dist ** 2 + cov_dist
+    w2_squared_dist = mean_dist**2 + cov_dist
 
     return w2_squared_dist
 

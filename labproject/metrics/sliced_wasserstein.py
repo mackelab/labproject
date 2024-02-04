@@ -6,7 +6,11 @@ from torch import Tensor
 
 
 def sliced_wasserstein_distance(
-    encoded_samples: Tensor, distribution_samples: Tensor, num_projections:int=50, p:int=2, device:str="cpu"
+    encoded_samples: Tensor,
+    distribution_samples: Tensor,
+    num_projections: int = 50,
+    p: int = 2,
+    device: str = "cpu",
 ):
     """
     Sliced Wasserstein distance between encoded samples and distribution samples
@@ -21,6 +25,10 @@ def sliced_wasserstein_distance(
     Return:
         torch.Tensor: Tensor of wasserstein distances of size (num_projections, 1)
     """
+
+    # check input (n,d only)
+    assert len(encoded_samples.size()) == 2, "Real samples must be 2-dimensional, (n,d)"
+    assert len(distribution_samples.size()) == 2, "Fake samples must be 2-dimensional, (n,d)"
 
     embedding_dim = distribution_samples.size(-1)
 
@@ -42,7 +50,6 @@ def sliced_wasserstein_distance(
 
     # return torch.pow(torch.mean(wasserstein_distance, dim=(-2, -1)), 1 / p)
     return torch.mean(wasserstein_distance, dim=(-2, -1))
-
 
 
 def rand_projections(embedding_dim: int, num_samples: int):
@@ -67,7 +74,7 @@ if __name__ == "__main__":
     # Generate random samples
     samples1 = torch.randn(100, 2)
     samples2 = torch.randn(100, 2)
-    
+
     # Compute sliced wasserstein distance
     sw_distance = sliced_wasserstein_distance(samples1, samples2)
     print(sw_distance)

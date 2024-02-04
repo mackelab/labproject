@@ -6,7 +6,10 @@ import os
 
 from omegaconf import OmegaConf
 
-CONF_PATH = STYLE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), "configs")) 
+CONF_PATH = STYLE_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), "configs")
+)
+
 
 def set_seed(seed: int) -> None:
     """Set seed for reproducibility
@@ -21,9 +24,10 @@ def set_seed(seed: int) -> None:
     torch.backends.cudnn.benchmark = False
     return seed
 
+
 def get_cfg() -> OmegaConf:
     """This function returns the configuration file for the current experiment run.
-    
+
     The configuration file is expected to be located at ../configs/conf_{name}.yaml, where name will match the name of the run_{name}.py file.
 
     Raises:
@@ -37,6 +41,7 @@ def get_cfg() -> OmegaConf:
     name = filename.split("/")[-1].split(".")[0].split("_")[-1]
     try:
         config = OmegaConf.load(CONF_PATH + f"/conf_{name}.yaml")
+        config.running_user = name
     except FileNotFoundError:
         msg = f"Config file not found for {name}. Please create a config file at ../configs/conf_{name}.yaml"
         raise FileNotFoundError(msg)
