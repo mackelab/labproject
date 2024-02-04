@@ -588,7 +588,7 @@
             
   
   <span class="md-ellipsis">
-    Notebook
+    Notebooks
   </span>
   
 
@@ -598,7 +598,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Notebook
+            Notebooks
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1022,6 +1022,18 @@
   
       <p>Compute the KL divergence between Gaussian approximations of real and fake samples.
 Dimensionality of the samples must be the same and &gt;=2 (for covariance calculation).</p>
+<p>In detail, for each set of samples, we calculate the mean and covariance matrix.</p>
+<div class="arithmatex">\[ \mu_{\text{real}} = \frac{1}{n} \sum_{i=1}^{n} x_i \qquad \mu_{\text{fake}} = \frac{1}{n} \sum_{i=1}^{n} y_i \]</div>
+<div class="arithmatex">\[
+\Sigma_{\text{real}} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \mu_{\text{real}})(x_i - \mu_{\text{real}})^T \qquad
+\Sigma_{\text{fake}} = \frac{1}{n-1} \sum_{i=1}^{n} (y_i - \mu_{\text{fake}})(y_i - \mu_{\text{fake}})^T
+\]</div>
+<p>Then we calculate the KL divergence between the two Gaussian approximations:</p>
+<div class="arithmatex">\[
+D_{KL}(N(\mu_{\text{real}}, \Sigma_{\text{real}}) || N(\mu_{\text{fake}}, \Sigma_{\text{fake}})) = 
+\frac{1}{2} \left( \text{tr}(\Sigma_{\text{fake}}^{-1} \Sigma_{\text{real}}) + (\mu_{\text{fake}} - \mu_{\text{real}})^T \Sigma_{\text{fake}}^{-1} (\mu_{\text{fake}} - \mu_{\text{real}})
+- k + \log \frac{|\Sigma_{\text{fake}}|}{|\Sigma_{\text{real}}|} \right)
+\]</div>
 
 
 
@@ -1073,17 +1085,18 @@ Dimensionality of the samples must be the same and &gt;=2 (for covariance calcul
   <table>
     <thead>
       <tr>
-<th>Name</th>        <th>Type</th>
+        <th>Type</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-<td><code>float</code></td>          <td>
+          <td>
+                <code><span title="torch.Tensor">Tensor</span></code>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>The KL divergence between the two Gaussian approximations.</p>
+              <p>torch.Tensor: The KL divergence between the two Gaussian approximations.</p>
             </div>
           </td>
         </tr>
@@ -1092,8 +1105,7 @@ Dimensionality of the samples must be the same and &gt;=2 (for covariance calcul
 
           <details class="quote">
             <summary>Source code in <code>labproject/metrics/gaussian_kl.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 4</span>
-<span class="normal"> 5</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 5</span>
 <span class="normal"> 6</span>
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
@@ -1124,17 +1136,54 @@ Dimensionality of the samples must be the same and &gt;=2 (for covariance calcul
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">gaussian_kl_divergence</span><span class="p">(</span><span class="n">real_samples</span><span class="p">,</span> <span class="n">fake_samples</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">gaussian_kl_divergence</span><span class="p">(</span><span class="n">real_samples</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">fake_samples</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the KL divergence between Gaussian approximations of real and fake samples.</span>
 <span class="sd">    Dimensionality of the samples must be the same and &gt;=2 (for covariance calculation).</span>
+
+<span class="sd">    In detail, for each set of samples, we calculate the mean and covariance matrix.</span>
+
+<span class="sd">    $$ \mu_{\text{real}} = \frac{1}{n} \sum_{i=1}^{n} x_i \qquad \mu_{\text{fake}} = \frac{1}{n} \sum_{i=1}^{n} y_i $$</span>
+
+
+<span class="sd">    $$</span>
+<span class="sd">    \Sigma_{\text{real}} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \mu_{\text{real}})(x_i - \mu_{\text{real}})^T \qquad</span>
+<span class="sd">    \Sigma_{\text{fake}} = \frac{1}{n-1} \sum_{i=1}^{n} (y_i - \mu_{\text{fake}})(y_i - \mu_{\text{fake}})^T</span>
+<span class="sd">    $$</span>
+
+<span class="sd">    Then we calculate the KL divergence between the two Gaussian approximations:</span>
+
+<span class="sd">    $$</span>
+<span class="sd">    D_{KL}(N(\mu_{\text{real}}, \Sigma_{\text{real}}) || N(\mu_{\text{fake}}, \Sigma_{\text{fake}})) = </span>
+<span class="sd">    \frac{1}{2} \left( \text{tr}(\Sigma_{\text{fake}}^{-1} \Sigma_{\text{real}}) + (\mu_{\text{fake}} - \mu_{\text{real}})^T \Sigma_{\text{fake}}^{-1} (\mu_{\text{fake}} - \mu_{\text{real}})</span>
+<span class="sd">    - k + \log \frac{|\Sigma_{\text{fake}}|}{|\Sigma_{\text{real}}|} \right)</span>
+<span class="sd">    $$</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        real_samples (torch.Tensor): A tensor representing the real samples.</span>
 <span class="sd">        fake_samples (torch.Tensor): A tensor representing the fake samples.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        float: The KL divergence between the two Gaussian approximations.</span>
+<span class="sd">        torch.Tensor: The KL divergence between the two Gaussian approximations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># calculate mean and covariance of real and fake samples</span>
     <span class="n">mu_real</span> <span class="o">=</span> <span class="n">real_samples</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1524,20 +1573,90 @@ Dimensionality of the samples must be the same and &gt;=2 (for covariance calcul
   <div class="doc doc-contents ">
   
       <p>Downloads a file from the Hetzner Storage Box.</p>
-<p>Example usage:</p>
-<pre><code class="language-python">if download_file('path/to/remote/file.txt', 'path/to/save/file.txt'):
-    print(&quot;Download successful&quot;)
-else:
-    print(&quot;Download failed&quot;)
-</code></pre>
 
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>remote_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The path to the remote file to be downloaded.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>local_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The path where the file should be saved locally.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>bool</code></td>          <td>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True if the download is successful, False otherwise.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>if download_file('path/to/remote/file.txt', 'path/to/save/file.txt'):
+    print("Download successful")
+else:
+    print("Download failed")</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
           <details class="quote">
             <summary>Source code in <code>labproject/data.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
@@ -1553,18 +1672,30 @@ else:
 <span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
-<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Downloads a file from the Hetzner Storage Box.</span>
 
-<span class="sd">    Example usage:</span>
+<span class="sd">    Args:</span>
+<span class="sd">        remote_path (str): The path to the remote file to be downloaded.</span>
+<span class="sd">        local_path (str): The path where the file should be saved locally.</span>
 
-<span class="sd">    ```python</span>
-<span class="sd">    if download_file(&#39;path/to/remote/file.txt&#39;, &#39;path/to/save/file.txt&#39;):</span>
-<span class="sd">        print(&quot;Download successful&quot;)</span>
-<span class="sd">    else:</span>
-<span class="sd">        print(&quot;Download failed&quot;)</span>
-<span class="sd">    ```</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the download is successful, False otherwise.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; if download_file(&#39;path/to/remote/file.txt&#39;, &#39;path/to/save/file.txt&#39;):</span>
+<span class="sd">        &gt;&gt;&gt;     print(&quot;Download successful&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; else:</span>
+<span class="sd">        &gt;&gt;&gt;     print(&quot;Download failed&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">STORAGEBOX_URL</span><span class="si">}</span><span class="s2">/remote.php/dav/files/</span><span class="si">{</span><span class="n">HETZNER_STORAGEBOX_USERNAME</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">remote_path</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">HETZNER_STORAGEBOX_USERNAME</span><span class="p">,</span> <span class="n">HETZNER_STORAGEBOX_PASSWORD</span><span class="p">)</span>
@@ -1679,19 +1810,19 @@ else:
 
           <details class="quote">
             <summary>Source code in <code>labproject/data.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a dataset by name</span>
 
 <span class="sd">    Args:</span>
@@ -1779,38 +1910,56 @@ else:
     </tbody>
   </table>
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>@register_dataset("random")
+def random_dataset(n=1000, d=10):
+    return torch.randn(n, d)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
           <details class="quote">
             <summary>Source code in <code>labproject/data.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This decorator wrapps a function that should return a dataset and ensures that the dataset is a PyTorch tensor, with the correct shape.</span>
 
 <span class="sd">    Args:</span>
@@ -1818,6 +1967,11 @@ else:
 
 <span class="sd">    Returns:</span>
 <span class="sd">        callable: Dataset generator function wrapper</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; @register_dataset(&quot;random&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; def random_dataset(n=1000, d=10):</span>
+<span class="sd">        &gt;&gt;&gt;     return torch.randn(n, d)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -1828,7 +1982,7 @@ else:
             <span class="k">assert</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;d must be a positive integer&quot;</span>
 
             <span class="c1"># Call the original function</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
             <span class="c1"># Convert the dataset to a PyTorch tensor</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">dataset</span>
@@ -1839,6 +1993,7 @@ else:
 
         <span class="n">DATASETS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrapper</span>
         <span class="k">return</span> <span class="n">wrapper</span>
+
     <span class="k">return</span> <span class="n">decorator</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -1860,17 +2015,90 @@ else:
   <div class="doc doc-contents ">
   
       <p>Uploads a file to the Hetzner Storage Box.</p>
-<p>Example usage:</p>
-<pre><code class="language-python">if upload_file('path/to/your/local/file.txt', 'path/to/remote/file.txt'):
-    print(&quot;Upload successful&quot;)
-else:
-    print(&quot;Upload failed&quot;)
-</code></pre>
 
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>local_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The path to the local file to be uploaded.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>remote_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The path where the file should be uploaded on the remote server.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>bool</code></td>          <td>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True if the upload is successful, False otherwise.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>if upload_file('path/to/your/local/file.txt', 'path/to/remote/file.txt'):
+    print("Upload successful")
+else:
+    print("Upload failed")</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
           <details class="quote">
             <summary>Source code in <code>labproject/data.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
-<span class="normal">18</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
@@ -1888,19 +2116,26 @@ else:
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">):</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="n">local_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Uploads a file to the Hetzner Storage Box.</span>
 
-<span class="sd">    Example usage:</span>
+<span class="sd">    Args:</span>
+<span class="sd">        local_path (str): The path to the local file to be uploaded.</span>
+<span class="sd">        remote_path (str): The path where the file should be uploaded on the remote server.</span>
 
-<span class="sd">    ```python</span>
-<span class="sd">    if upload_file(&#39;path/to/your/local/file.txt&#39;, &#39;path/to/remote/file.txt&#39;):</span>
-<span class="sd">        print(&quot;Upload successful&quot;)</span>
-<span class="sd">    else:</span>
-<span class="sd">        print(&quot;Upload failed&quot;)</span>
-<span class="sd">    ```</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the upload is successful, False otherwise.</span>
 
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; if upload_file(&#39;path/to/your/local/file.txt&#39;, &#39;path/to/remote/file.txt&#39;):</span>
+<span class="sd">        &gt;&gt;&gt;     print(&quot;Upload successful&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; else:</span>
+<span class="sd">        &gt;&gt;&gt;     print(&quot;Upload failed&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">STORAGEBOX_URL</span><span class="si">}</span><span class="s2">/remote.php/dav/files/</span><span class="si">{</span><span class="n">HETZNER_STORAGEBOX_USERNAME</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">remote_path</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">HETZNER_STORAGEBOX_USERNAME</span><span class="p">,</span> <span class="n">HETZNER_STORAGEBOX_PASSWORD</span><span class="p">)</span>
@@ -2302,7 +2537,11 @@ for extracting (N,D) embeddings from respective data and models.</p>
     
       <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

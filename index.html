@@ -337,7 +337,7 @@
             
   
   <span class="md-ellipsis">
-    Notebook
+    Notebooks
   </span>
   
 
@@ -347,7 +347,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Notebook
+            Notebooks
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -502,17 +502,21 @@ pre-commit install
 <p><code>pip install -e .</code> installs the labproject package in editable mode, i.e. changes to the code are immediately reflected in the package.</p>
 <p>The environment now contains, <code>numpy</code>, <code>scipy</code>, <code>matplotlib</code>, <code>torch</code>, and <code>jupyter</code>.</p>
 <h2 id="development">Development</h2>
-<p>Develop code in your desired way, e.g. in local notebooks (you don't commit, the public notebooks for the website can be found in <code>docs/notebooks/</code>). </p>
-<p>Once you want other people to see your figure/experiment, add them to <code>plotting.py</code> and <code>experiments.py</code> and call the corresponding functions in <code>run.py</code>. </p>
-<p>After committing and pushing your changes, GitHub will execute every <code>run_*.py</code> and update the figures in Overleaf. </p>
-<p>You can obviously also run it yourself with <code>python labproject/run.py</code>.</p>
+<p>Develop code in your desired way, e.g. in local notebooks (you don't commit them, they will be automatically ignored). The public notebooks i.e. for the website can be found in <code>docs/notebooks/</code>, if you want to share the whole notebook then move it in this directory.</p>
+<p>Once you want other people to see your figure/experiment, add them to <code>plotting.py</code> and <code>experiments.py</code> and call the corresponding functions in <code>run_{name}.py</code>. </p>
+<p>After committing and pushing your changes, GitHub will execute every <code>run_{name}.py</code> and update the figures in Overleaf. </p>
+<p>You can obviously also run it yourself with <code>python labproject/run_{name}.py</code>.</p>
 <h2 id="documentation">Documentation</h2>
 <p>We use mkdocs to create the public version of our tutorials (notebooks) and the API documentation. mkdocs are written in Markdown and are found in <code>docs/</code>.</p>
-<p>After installing the necessary dependencies with <code>pip install -e ".[docs]"</code>, you can view your local version with <code>mkdocs serve</code> in <code>labproject/</code> and then open http://127.0.0.1:8000/.</p>
+<p>After installing the necessary dependencies with <code>pip install -e ".[docs]"</code>, you can view your local version with <code>mkdocs serve</code> in <code>labproject/</code> and then open http://127.0.0.1:8000/.
+Every push to the main branch will also publish the current version on: http://www.mackelab.org/labproject/ </p>
 <p>To add your notebooks as pages in the docs, add the following to <code>mkdocs.yml</code>:</p>
 <pre><code class="language-yaml">pages:
-  - Notebooks:
-    - 'notebooks/your_notebook.ipynb' # this part is your new notebook
+  - Notebooks: 
+    - Example Notebook: notebooks/example.ipynb
+    - FID notebook: notebooks/fid.ipynb
+    - UR_NOTEBOOK_NAME: notebook/UR_NOTEBOOK_FILE
+
 </code></pre>
 <p>To add your functions to the API documentation, add the following to <code>docs/api.md</code>:</p>
 <pre><code class="language-markdown">### Your module
@@ -581,7 +585,11 @@ pre-commit install
     
       <script src="assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>
