@@ -37,7 +37,9 @@ jobs:
       - name: Run experiments and generate plots
         run: |
           cd ${{ github.workspace }}
-          python3 labproject/run_default.py
+          for script in run_*.py; do
+            python "$script"
+          done
           cd ..
           cp labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
