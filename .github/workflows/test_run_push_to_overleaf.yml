@@ -2,7 +2,7 @@ name: 'Push plots to Overleaf'
 on:
   push:
     branches:
-      - main
+      - manuel_changes
 jobs:
   build:
     runs-on: self-hosted
@@ -35,22 +35,19 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -e ".[docs]"
       - name: Run experiments and generate plots
+        shell: bash
         run: |
           cd ${{ github.workspace }}
-          python3 labproject/run.py
-          cd ..
-          cp labproject/plots/* overleaf/figures/
-     - name: Check for Errors
-        run: |
-          if [ $? -ne 0 ]; then
-            echo "One or more scripts failed."
-            exit 1
-          fi
-
+          shopt -s nullglob
+          for script in run_*.py; do
+            python "$script"
+          done
       - name: Commit and push changes to Overleaf
         run: |
             cd ${{ github.workspace }}
-            cd ../overleaf/
+            cd ..
+            cp -r labproject/plots overleaf/figures/
+            cd overleaf/
             git config --global user.name "Github Actions"
             git config --global user.email ""
             git add figures/

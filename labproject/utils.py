@@ -2,9 +2,11 @@ import torch
 import numpy as np
 import random
 import inspect
+import os
 
 from omegaconf import OmegaConf
 
+CONF_PATH = STYLE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), "configs")) 
 
 def set_seed(seed: int) -> None:
     """Set seed for reproducibility
@@ -34,7 +36,7 @@ def get_cfg() -> OmegaConf:
     filename = caller_frame.f_code.co_filename
     name = filename.split("/")[-1].split(".")[0].split("_")[-1]
     try:
-        config = OmegaConf.load(f"../configs/conf_{name}.yaml")
+        config = OmegaConf.load(CONF_PATH + f"/conf_{name}.yaml")
     except FileNotFoundError:
         msg = f"Config file not found for {name}. Please create a config file at ../configs/conf_{name}.yaml"
         raise FileNotFoundError(msg)
