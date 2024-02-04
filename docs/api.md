@@ -2,7 +2,7 @@
 
 ## Metrics
 
-### Gaussian Kernel
+### Gaussian KL divergence
 
 ::: labproject.metrics.gaussian_kl
 
@@ -30,4 +30,8 @@
 
 ### Run
 
-::: labproject.run
+::: labproject.run_default
+
+### Utils
+
+::: labproject.utils
