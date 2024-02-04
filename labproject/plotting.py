@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import os
 
 # Load matplotlibrc file
-STYLE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "matplotlibrc"))  # Necessary for GitHub Actions
+STYLE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), "matplotlibrc"))  # Necessary for GitHub Actions/ Calling from other directories
 plt.style.use(STYLE_PATH)
 
-PLOT_PATH = "../plots/"
+PLOT_PATH =  os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), "plots"))
 
 
 def plot_scaling_metric_dimensionality(dimensionality, distances, metric_name, dataset_name):
