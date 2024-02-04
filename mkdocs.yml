@@ -1,15 +1,24 @@
-site_name: Distribution Metrics for Evaluating Generative Models in Science
+site_name: Mackathon
 
 nav:
   - Home: index.md
-  - Example notebook: notebooks/example.ipynb
-  - FID notebook: notebooks/fid.ipynb
-  - API Reference: api.md
+  - API: api.md
+  - Notebook: 
+    - Example Notebook: notebooks/example.ipynb
+    - FID notebook: notebooks/fid.ipynb
 
+
+theme:
+  name: material
+  palette:
+    primary: 'indigo'
+    accent: 'indigo'
+  collapse_navigation: False
 
 plugins:
   - search
   - mkdocs-jupyter
+  - include-markdown
   - mkdocstrings:
       watch:
         - labproject
@@ -17,3 +26,10 @@ plugins:
         python:
           rendering:
             show_source: true
+
+markdown_extensions:
+    - mdx_math:
+        enable_dollar_delimiter: True
+
+extra_javascript: 
+    - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
