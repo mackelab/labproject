@@ -21,7 +21,7 @@ docs = [
     "mkdocs-jupyter==0.24.2",
     "mkdocstrings[python]>=0.18",
     "mkdocs-include-markdown-plugin",
-    "python-markdown-math",
+    "pymdown-extensions",
 ]
 dev = [
     "black",

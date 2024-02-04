@@ -1,17 +1,36 @@
 import torch
+from torch import Tensor
 
 
-def gaussian_kl_divergence(real_samples, fake_samples):
-    """
+def gaussian_kl_divergence(real_samples: Tensor, fake_samples: Tensor) -> Tensor:
+    r"""
     Compute the KL divergence between Gaussian approximations of real and fake samples.
     Dimensionality of the samples must be the same and >=2 (for covariance calculation).
+
+    In detail, for each set of samples, we calculate the mean and covariance matrix.
+
+    $$ \mu_{\text{real}} = \frac{1}{n} \sum_{i=1}^{n} x_i \qquad \mu_{\text{fake}} = \frac{1}{n} \sum_{i=1}^{n} y_i $$
+
+
+    $$
+    \Sigma_{\text{real}} = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \mu_{\text{real}})(x_i - \mu_{\text{real}})^T \qquad
+    \Sigma_{\text{fake}} = \frac{1}{n-1} \sum_{i=1}^{n} (y_i - \mu_{\text{fake}})(y_i - \mu_{\text{fake}})^T
+    $$
+
+    Then we calculate the KL divergence between the two Gaussian approximations:
+
+    $$
+    D_{KL}(N(\mu_{\text{real}}, \Sigma_{\text{real}}) || N(\mu_{\text{fake}}, \Sigma_{\text{fake}})) = 
+    \frac{1}{2} \left( \text{tr}(\Sigma_{\text{fake}}^{-1} \Sigma_{\text{real}}) + (\mu_{\text{fake}} - \mu_{\text{real}})^T \Sigma_{\text{fake}}^{-1} (\mu_{\text{fake}} - \mu_{\text{real}})
+    - k + \log \frac{|\Sigma_{\text{fake}}|}{|\Sigma_{\text{real}}|} \right)
+    $$
 
     Args:
         real_samples (torch.Tensor): A tensor representing the real samples.
         fake_samples (torch.Tensor): A tensor representing the fake samples.
 
     Returns:
-        float: The KL divergence between the two Gaussian approximations.
+        torch.Tensor: The KL divergence between the two Gaussian approximations.
     """
     # calculate mean and covariance of real and fake samples
     mu_real = real_samples.mean(dim=0)
