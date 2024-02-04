@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import os
 
 # Load matplotlibrc file
-plt.style.use("../matplotlibrc")
+STYLE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "matplotlibrc"))  # Necessary for GitHub Actions
+plt.style.use(STYLE_PATH)
 
 PLOT_PATH = "../plots/"
 
