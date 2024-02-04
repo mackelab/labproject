@@ -2,7 +2,7 @@ name: 'Push plots to Overleaf'
 on:
   push:
     branches:
-      - main
+      - manuel_changes
 jobs:
   build:
     runs-on: self-hosted
@@ -37,7 +37,7 @@ jobs:
       - name: Run experiments and generate plots
         run: |
           cd ${{ github.workspace }}
-          python3 labproject/run.py
+          python3 labproject/run_default.py
           cd ..
           cp labproject/plots/* overleaf/figures/
       - name: Commit and push changes to Overleaf
