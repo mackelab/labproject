@@ -11,6 +11,12 @@ Here all functions will be documented that are part of the public API of the lab
     options:
       heading_level: 4
 
+### Gaussian Wasserstein
+
+::: labproject.metrics.gaussian_squared_wasserstein
+    options:
+      heading_level: 4
+
 ### Sliced Wasserstein
 
 ::: labproject.metrics.sliced_wasserstein
