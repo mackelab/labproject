@@ -45,9 +45,9 @@ jobs:
       - name: Commit and push changes to Overleaf
         run: |
             cd ${{ github.workspace }}
-            ls
-            cp labproject/plots/* overleaf/figures/
             cd ..
+            ls labproject/plots
+            cp labproject/plots/* overleaf/figures/
             cd overleaf/
             git config --global user.name "Github Actions"
             git config --global user.email ""
