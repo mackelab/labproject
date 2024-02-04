@@ -504,7 +504,7 @@ pre-commit install
 <h2 id="development">Development</h2>
 <p>Develop code in your desired way, e.g. in local notebooks (you don't commit, the public notebooks for the website can be found in <code>docs/notebooks/</code>). </p>
 <p>Once you want other people to see your figure/experiment, add them to <code>plotting.py</code> and <code>experiments.py</code> and call the corresponding functions in <code>run.py</code>. </p>
-<p>After committing and pushing your changes, GitHub will execute <code>run.py</code> and update the figures in Overleaf. </p>
+<p>After committing and pushing your changes, GitHub will execute every <code>run_*.py</code> and update the figures in Overleaf. </p>
 <p>You can obviously also run it yourself with <code>python labproject/run.py</code>.</p>
 <h2 id="documentation">Documentation</h2>
 <p>We use mkdocs to create the public version of our tutorials (notebooks) and the API documentation. mkdocs are written in Markdown and are found in <code>docs/</code>.</p>
