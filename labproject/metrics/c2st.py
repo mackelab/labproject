@@ -344,7 +344,7 @@ def c2st_scores(
 
     return scores
 
-  
+
 def c2st_optimal(density1: Any, density2: Any, n_monte_carlo: int = 10_000) -> Tensor:
     r"""Return the c2st that can be achieved by an optimal classifier.
 

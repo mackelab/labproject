@@ -20,7 +20,7 @@ def gaussian_kl_divergence(real_samples: Tensor, fake_samples: Tensor) -> Tensor
     Then we calculate the KL divergence between the two Gaussian approximations:
 
     $$
-    D_{KL}(N(\mu_{\text{real}}, \Sigma_{\text{real}}) || N(\mu_{\text{fake}}, \Sigma_{\text{fake}})) = 
+    D_{KL}(N(\mu_{\text{real}}, \Sigma_{\text{real}}) || N(\mu_{\text{fake}}, \Sigma_{\text{fake}})) =
     \frac{1}{2} \left( \text{tr}(\Sigma_{\text{fake}}^{-1} \Sigma_{\text{real}}) + (\mu_{\text{fake}} - \mu_{\text{real}})^T \Sigma_{\text{fake}}^{-1} (\mu_{\text{fake}} - \mu_{\text{real}})
     - k + \log \frac{|\Sigma_{\text{fake}}|}{|\Sigma_{\text{real}}|} \right)
     $$
@@ -31,13 +31,18 @@ def gaussian_kl_divergence(real_samples: Tensor, fake_samples: Tensor) -> Tensor
 
     Returns:
         torch.Tensor: The KL divergence between the two Gaussian approximations.
-        
+
     Examples:
-        >>> real_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional 
-        >>> fake_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional 
-        >>> kl_div = gaussian_kl_divergence(real_samples, fake_samples) 
-        >>> print(kl_div) 
+        >>> real_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional
+        >>> fake_samples = torch.randn(100, 2)  # 100 samples, 2-dimensional
+        >>> kl_div = gaussian_kl_divergence(real_samples, fake_samples)
+        >>> print(kl_div)
     """
+
+    # check input (n,d only)
+    assert len(real_samples.size()) == 2, "Real samples must be 2-dimensional, (n,d)"
+    assert len(fake_samples.size()) == 2, "Fake samples must be 2-dimensional, (n,d)"
+
     # calculate mean and covariance of real and fake samples
     mu_real = real_samples.mean(dim=0)
     mu_fake = fake_samples.mean(dim=0)
