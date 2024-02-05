@@ -12,6 +12,7 @@ def c2st_optimal(density1: Any, density2: Any, n_monte_carlo: int = 10_000) -> T
     Args:
         density1: The first density. Must have `.sample()` and `.log_prob()`.
         density2: The second density. Must have `.sample()` and `.log_prob()`.
+        n_monte_carlo: Number of Monte-Carlo samples that the computation is based on.
 
     Returns:
         The closed-form c2st (between 0.5 and 1.0).
