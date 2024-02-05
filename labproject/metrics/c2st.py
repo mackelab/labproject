@@ -12,10 +12,6 @@ from sklearn.neural_network import MLPClassifier
 
 # from sbi: https://github.com/sbi-dev/sbi/blob/main/sbi/utils/metrics.py
 
-from typing import Any
-
-from torch import Tensor
-
 
 def c2st_nn(
     X: Tensor,
