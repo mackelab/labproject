@@ -34,6 +34,10 @@ jobs:
           cd ${{ github.workspace }}
           python3 -m pip install --upgrade pip
           pip install -e ".[docs]"
+      - name: Check formatting
+        run: |
+          cd ${{ github.workspace }}
+          black --check labproject/
       - name: Run experiments and generate plots
         shell: bash
         run: |

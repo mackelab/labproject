@@ -5,6 +5,10 @@ Here all functions will be documented that are part of the public API of the lab
 
 ## Metrics
 
+::: labproject.metrics
+    options:
+      heading_level: 3
+
 ### Gaussian KL divergence
 
 ::: labproject.metrics.gaussian_kl

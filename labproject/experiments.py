@@ -1,6 +1,7 @@
 import torch
-from .metrics import sliced_wasserstein_distance, gaussian_kl_divergence
-from .plotting import plot_scaling_metric_dimensionality
+from metrics import sliced_wasserstein_distance, gaussian_kl_divergence
+from plotting import plot_scaling_metric_dimensionality
+from metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
 import pickle
 
 
@@ -19,7 +20,6 @@ class Experiment:
 
 
 class ScaleDim(Experiment):
-
     def __init__(self, metric_name, metric_fn, min_dim=1, max_dim=1000, step=100):
         self.metric_name = metric_name
         self.metric_fn = metric_fn
