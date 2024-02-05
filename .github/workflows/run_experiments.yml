@@ -1,4 +1,4 @@
-name: 'Push plots to Overleaf'
+name: 'Push plots to Overleaf, Github Pages'
 on:
   push:
     branches:
