@@ -12,6 +12,7 @@ conda create -n labproject python=3.9
 conda activate labproject
 
 # install labproject package with dependencies
+python3 -m pip install --upgrade pip
 pip install -e ".[dev,docs]"
 
 # install pre-commit hooks for black auto-formatting
