@@ -2,7 +2,7 @@ import torch
 
 
 def sinkhorn_algorithm(
-    x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 100, p: int = 2
+    x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 1000, p: int = 2
 ):
     r"""Compute the sinkhorn approximation to the Wasserstein-p distance between two sets of samples.
     The sinkhorn algorithm adds a small entropy regularization term to the empirical Wasserstein distance.
@@ -63,7 +63,7 @@ def sinkhorn_algorithm(
 
 
 def sinkhorn_loss(
-    x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 100, p: int = 2
+    x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 1000, p: int = 2
 ):
     loss, transport = sinkhorn_algorithm(x, y, epsilon, niter, p)
     return loss
