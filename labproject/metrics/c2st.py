@@ -20,6 +20,7 @@ def c2st_nn(
     seed: int = 1,
     n_folds: int = 5,
     metric: str = "accuracy",
+    z_score: bool = True,
     activation: Literal["identity", "logistic", "tanh", "relu"] = "relu",
     clf_kwargs: dict[str, Any] = {},
 ) -> Tensor:
@@ -46,8 +47,9 @@ def c2st_nn(
         seed: Seed for the sklearn classifier and the KFold cross-validation
         n_folds: Number of folds to use
         metric: sklearn compliant metric to use for the scoring parameter of cross_val_score
-        activation: activation function for the hidden layer
-        clf_kwargs: additional kwargs for `MLPClassifier`
+        z_score: Z-scoring using X, i.e. mean and std deviation of X is used to normalize Y, i.e. Y=(Y - mean)/std
+        activation: Activation function for the hidden layer
+        clf_kwargs: Additional kwargs for `MLPClassifier`
 
     Return:
         torch.tensor containing the mean accuracy score over the test sets
@@ -87,7 +89,7 @@ def c2st_nn(
         seed=seed,
         n_folds=n_folds,
         metric=metric,
-        z_score=True,
+        z_score=z_score,
         noise_scale=None,
         verbosity=0,
         clf_class=clf_class,
@@ -105,6 +107,7 @@ def c2st_rf(
     seed: int = 1,
     n_folds: int = 5,
     metric: str = "accuracy",
+    z_score: bool = True,
     n_estimators: int = 100,
     clf_kwargs: dict[str, Any] = {},
 ) -> Tensor:
@@ -131,8 +134,9 @@ def c2st_rf(
         seed: Seed for the sklearn classifier and the KFold cross-validation
         n_folds: Number of folds to use
         metric: sklearn compliant metric to use for the scoring parameter of cross_val_score
-        n_estimators: the number of trees in the forest
-        clf_kwargs: additional kwargs for `RandomForestClassifier`
+        z_score: Z-scoring using X, i.e. mean and std deviation of X is used to normalize Y, i.e. Y=(Y - mean)/std
+        n_estimators: The number of trees in the forest
+        clf_kwargs: Additional kwargs for `RandomForestClassifier`
 
     Return:
         torch.tensor containing the mean accuracy score over the test sets
@@ -163,7 +167,7 @@ def c2st_rf(
         seed=seed,
         n_folds=n_folds,
         metric=metric,
-        z_score=True,
+        z_score=z_score,
         noise_scale=None,
         verbosity=0,
         clf_class=clf_class,
@@ -181,6 +185,7 @@ def c2st_knn(
     seed: int = 1,
     n_folds: int = 5,
     metric: str = "accuracy",
+    z_score: bool = True,
     n_neighbors: int = 5,
     clf_kwargs: dict = {},
 ) -> Tensor:
@@ -207,8 +212,9 @@ def c2st_knn(
         seed: Seed for the sklearn classifier and the KFold cross-validation
         n_folds: Number of folds to use
         metric: sklearn compliant metric to use for the scoring parameter of cross_val_score
-        n_neighbors: the number of neighbors to use by default for `kneighbors` queries
-        clf_kwargs: additional kwargs for `KNeighborsClassifier`
+        z_score: Z-scoring using X, i.e. mean and std deviation of X is used to normalize Y, i.e. Y=(Y - mean)/std
+        n_neighbors: The number of neighbors to use by default for `kneighbors` queries
+        clf_kwargs: Additional kwargs for `KNeighborsClassifier`
 
     Return:
         torch.tensor containing the mean accuracy score over the test sets
@@ -239,7 +245,7 @@ def c2st_knn(
         seed=seed,
         n_folds=n_folds,
         metric=metric,
-        z_score=True,
+        z_score=z_score,
         noise_scale=None,
         verbosity=0,
         clf_class=clf_class,
