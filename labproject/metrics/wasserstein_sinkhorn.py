@@ -1,7 +1,9 @@
 import torch
 
 
-def sinkhorn_loss(x: torch.Tensor, y: torch.Tensor, epsilon: float, niter: int = 100, p: int = 2):
+def sinkhorn_loss(
+    x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 100, p: int = 2
+):
     r"""Compute the sinkhorn approximation to the Wasserstein-p distance between two sets of samples.
     The sinkhorn algorithm adds a small entropy regularization term to the empirical Wasserstein distance.
     Hence this function solves the modified optimal transport problem:

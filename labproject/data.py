@@ -10,9 +10,13 @@ from torch.distributions import MultivariateNormal, Categorical
 from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset, Subset
-from torchvision.models import inception_v3
+
+# from torchvision.models import inception_v3
+from labproject.external.inception_v3 import InceptionV3
 
 from labproject.embeddings import FIDEmbeddingNet
+
+import warnings
 
 
 STORAGEBOX_URL = os.getenv("HETZNER_STORAGEBOX_URL")
@@ -98,7 +102,10 @@ def register_dataset(name: str) -> callable:
         def wrapper(n: int, d: Optional[int] = None, **kwargs):
 
             assert n > 0, "n must be a positive integer"
-            assert d > 0, "d must be a positive integer"
+            if d is not None:
+                assert d > 0, "d must be a positive integer"
+            else:
+                warnings.warn("d is not specified, make sure you know what you're doing!")
 
             # Call the original function
             dataset = func(n, d, **kwargs)
@@ -191,27 +198,18 @@ def load_cifar10(
     """
     transform = transforms.Compose(
         [
-            transforms.Resize((299, 299)),
             transforms.ToTensor(),
-            # normalize specific to inception model
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            # Move to GPU if available
-            transforms.Lambda(lambda x: x.to(device if torch.cuda.is_available() else "cpu")),
         ]
     )
     cifar10 = CIFAR10(root=save_path, train=train, download=True, transform=transform)
     dataloader = torch.utils.data.DataLoader(
         cifar10, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
     )
-    dataloader_subset = Subset(dataloader.dataset, range(n))
+    dataset_subset = Subset(dataloader.dataset, range(n))
     dataloader = DataLoader(
-        dataloader_subset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
+        dataset_subset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
     )
-    model = inception_v3(pretrained=True)
-    model.fc = torch.nn.Identity()  # replace the classifier with identity to get features
-    model.eval()
-    model = model.to(device if torch.cuda.is_available() else "cpu")
-    net = FIDEmbeddingNet(model)
+    net = FIDEmbeddingNet(device=device)
     embeddings = net.get_embeddings(dataloader)
     return embeddings
 
@@ -283,11 +281,14 @@ def toy_mog_2d():
 
 
 @register_dataset("cifar10_train")
-def cifar10_train(n=1000, d=10, save_path="data", device="cpu"):
+def cifar10_train(n=1000, d=2048, save_path="data", device="cpu"):
 
     assert d is None or d == 2048, "The dimensionality of the embeddings must be 2048"
 
     embeddings = load_cifar10(n, save_path=save_path, train=True, device=device)
+    # to cpu if necessary
+    if device == "cuda":
+        embeddings = embeddings.cpu()
 
     max_n = embeddings.shape[0]
 
@@ -301,7 +302,12 @@ def cifar10_test(n=1000, d=2048, save_path="data", device="cpu"):
 
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
 
+    assert d is None or d == 2048, "The dimensionality of the embeddings must be 2048"
+
     embeddings = load_cifar10(n, save_path=save_path, train=False, device=device)
+    # to cpu if necessary
+    if device == "cuda":
+        embeddings = embeddings.cpu()
 
     max_n = embeddings.shape[0]
 

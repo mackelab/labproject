@@ -152,3 +152,4 @@ figures/
 secrets.py
 
 results/
+.vscode/settings.json
