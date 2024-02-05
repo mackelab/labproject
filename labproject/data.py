@@ -236,6 +236,11 @@ def normal_distribution():
     return torch.distributions.Normal(0, 1)
 
 
+@register_dataset("toy_2d")
+def toy_2d(n=1000, d=2):
+    return toy_mog_2d().sample(n)
+
+
 @register_distribution("toy_2d")
 def toy_mog_2d():
     class Toy2D:
