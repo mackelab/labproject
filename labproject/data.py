@@ -227,9 +227,10 @@ def load_cifar10(
 def random_dataset(n=1000, d=10):
     return torch.randn(n, d)
 
+
 @register_distribution("normal")
 def normal_distribution():
-    return torch.distributions.Normal(0,1)
+    return torch.distributions.Normal(0, 1)
 
 
 @register_distribution("normal")
@@ -238,7 +239,7 @@ def normal_distribution():
 
 
 @register_distribution("toy_2d")
-def normal_distribution():
+def toy_2d():
     class Toy2D:
         def __init__(self):
             self.means = torch.tensor(
