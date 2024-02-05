@@ -1,4 +1,5 @@
 
+exp_log_name: "default" # optional but recommended
 data: "random" 
 experiments: ["ScaleDimKL"]
 n: 10000
