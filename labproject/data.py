@@ -267,6 +267,8 @@ def toy_mog_2d():
             ]
 
         def sample(self, sample_shape):
+            if isinstance(sample_shape, int):
+                sample_shape = (sample_shape,)
             # Sample from the mixture
             categorical = Categorical(self.weights)
             sample_indices = categorical.sample(sample_shape)
