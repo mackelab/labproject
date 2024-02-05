@@ -70,9 +70,11 @@ class ScaleSampleSize(Experiment):
             distances.append(self.metric_fn(dataset1[:n, :], dataset2[:n, :]))
         return self.sample_sizes, distances
 
-    def plot_experiment(self, sample_sizes, distances, dataset_name, ax=None):
+    def plot_experiment(
+        self, sample_sizes, distances, dataset_name, ax=None, color=None, label=None
+    ):
         plot_scaling_metric_sample_size(
-            sample_sizes, distances, self.metric_name, dataset_name, ax=ax, color=None
+            sample_sizes, distances, self.metric_name, dataset_name, ax=ax, color=color, label=label
         )
 
     def log_results(self, results, log_path):

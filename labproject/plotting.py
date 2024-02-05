@@ -34,12 +34,14 @@ def plot_scaling_metric_dimensionality(
 
 
 def plot_scaling_metric_sample_size(
-    sample_size, distances, metric_name, dataset_name, ax=None, color=None
+    sample_size, distances, metric_name, dataset_name, ax=None, color=None, label=None
 ):
     """Plot the behavior of a metric with number of samples."""
     if ax is None:
         if color is not None:
-            plt.plot(sample_size, distances, color=color, label=metric_name)
+            plt.plot(
+                sample_size, distances, color=color, label=metric_name if label is None else label
+            )
         else:
             plt.plot(sample_size, distances, label=metric_name)
         plt.xlabel("samples")
@@ -54,9 +56,11 @@ def plot_scaling_metric_sample_size(
         plt.close()
     else:
         if color is not None:
-            ax.plot(sample_size, distances, label=metric_name, color=color)
+            ax.plot(
+                sample_size, distances, color=color, label=metric_name if label is None else label
+            )
         else:
-            ax.plot(sample_size, distances, label=metric_name)
+            ax.plot(sample_size, distances, label=metric_name if label is None else label)
         ax.set_xlabel("samples")
 
         return ax
