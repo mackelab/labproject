@@ -46,10 +46,10 @@ class ScaleDim(Experiment):
 
 
 class ScaleDimKL(ScaleDim):
-    def __init__(self):
-        super().__init__("KL", gaussian_kl_divergence, min_dim=2)
+    def __init__(self, min_dim=2, **kwargs):
+        super().__init__("KL", gaussian_kl_divergence, min_dim=min_dim, **kwargs)
 
 
 class ScaleDimSW(ScaleDim):
-    def __init__(self):
-        super().__init__("Sliced Wasserstein", sliced_wasserstein_distance)
+    def __init__(self, min_dim=2, **kwargs):
+        super().__init__("Sliced Wasserstein", sliced_wasserstein_distance, **kwargs)
