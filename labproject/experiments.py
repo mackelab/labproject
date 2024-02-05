@@ -53,3 +53,18 @@ class ScaleDimKL(ScaleDim):
 class ScaleDimSW(ScaleDim):
     def __init__(self, min_dim=2, **kwargs):
         super().__init__("Sliced Wasserstein", sliced_wasserstein_distance, **kwargs)
+
+class CIFAR10_FID_Train_Test(Experiment):
+    def __init__(self):
+        super().__init__()
+
+    def run_experiment(self, dataset1, dataset2):
+        fid_metric = gaussian_squared_w2_distance(dataset1, dataset2)
+        return fid_metric
+
+    def log_results(self, fid_metric, log_path):
+        with open(log_path, "wb") as f:
+            pickle.dump(fid_metric, f)
+
+    def plot_experiment(self, fid_metric, dataset_name):
+        pass
