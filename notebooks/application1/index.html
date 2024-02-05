@@ -1370,7 +1370,7 @@ Licensed under the Apache License, Version 2.0.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [190]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy for="cell-1">
@@ -1384,22 +1384,25 @@ Licensed under the Apache License, Version 2.0.
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
-
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
 <span class="kn">from</span> <span class="nn">labproject.metrics.sliced_wasserstein</span> <span class="kn">import</span> <span class="n">sliced_wasserstein_distance</span>
-<span class="c1"># from labproject.metrics.gaussian_kl import gaussian_kl_divergence</span>
-<span class="c1"># from labproject.embeddings import *</span>
+<span class="kn">from</span> <span class="nn">labproject.experiments</span> <span class="kn">import</span> <span class="n">Experiment</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import torch
+import numpy as np
 from torch import Tensor
-
+import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from labproject.metrics.sliced_wasserstein import sliced_wasserstein_distance
-# from labproject.metrics.gaussian_kl import gaussian_kl_divergence
-# from labproject.embeddings import *</div>
+from labproject.experiments import Experiment
+</div>
 </div>
 </div>
 </div>
@@ -1411,7 +1414,7 @@ from labproject.metrics.sliced_wasserstein import sliced_wasserstein_distance
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [191]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy for="cell-2">
@@ -1424,12 +1427,12 @@ from labproject.metrics.sliced_wasserstein import sliced_wasserstein_distance
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">dataset1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'../../data/cifar10_train.pt'</span><span class="p">)</span>
-<span class="n">dataset2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'../../data/cifar10_test.pt'</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">dataset1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'../../data/cifar10_train.pt'</span><span class="p">)</span> <span class="c1"># torch.Size([50000, 2048])</span>
+<span class="n">dataset2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'../../data/cifar10_test.pt'</span><span class="p">)</span> <span class="c1"># torch.Size([10000, 2048])</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">
-dataset1 = torch.load('../../data/cifar10_train.pt')
-dataset2 = torch.load('../../data/cifar10_test.pt')</div>
+dataset1 = torch.load('../../data/cifar10_train.pt') # torch.Size([50000, 2048])
+dataset2 = torch.load('../../data/cifar10_test.pt') # torch.Size([10000, 2048])</div>
 </div>
 </div>
 </div>
@@ -1441,7 +1444,7 @@ dataset2 = torch.load('../../data/cifar10_test.pt')</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [192]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy for="cell-3">
@@ -1464,15 +1467,28 @@ dataset2 = torch.load('../../data/cifar10_test.pt')</div>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">ComparisonExperiment</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset1</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span> <span class="n">descr</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DistComp</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset1</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span> 
+                 <span class="n">n_perms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">perm_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset1</span> <span class="o">=</span> <span class="n">dataset1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset2</span> <span class="o">=</span> <span class="n">dataset2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_perms</span> <span class="o">=</span> <span class="n">n_perms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perm_size</span> <span class="o">=</span> <span class="n">perm_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">descr</span> <span class="o">=</span> <span class="n">descr</span>
 
-    <span class="k">def</span> <span class="nf">get_distance</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">metric</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">metric</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_perms</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_perms</span><span class="p">):</span>
+            <span class="n">dataset2_perm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset2</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perm_size</span><span class="p">)]</span>
+            <span class="n">dataset1_perm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset1</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perm_size</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">metric</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span><span class="p">(</span><span class="n">dataset1_perm</span><span class="p">,</span> <span class="n">dataset2_perm</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">plot_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">class Metric:
     def __init__(self, name: str, func: callable, **kwargs):
@@ -1484,15 +1500,29 @@ dataset2 = torch.load('../../data/cifar10_test.pt')</div>
         return self.func(x, y, **self.kwargs)
 
 
-class ComparisonExperiment:
-    def __init__(self, dataset1: Tensor, dataset2: Tensor, metrics: list[Metric], descr):
+class DistComp(Experiment):
+    def __init__(self, dataset1: Tensor, dataset2: Tensor, metrics: list[Metric], 
+                 n_perms: int = 100, perm_size=1000, descr=""):
         self.dataset1 = dataset1
         self.dataset2 = dataset2
         self.metrics = metrics
+        self.n_perms = n_perms
+        self.perm_size = perm_size
         self.descr = descr
 
-    def get_distance(x: Tensor, y: Tensor, metric, **kwargs) -&gt; Tensor:
-        return metric(x, y, **kwargs)</div>
+        columns = [metric.name for metric in metrics]
+        self.results_df = pd.DataFrame(np.nan, index=range(self.n_perms), columns=columns)
+
+    def run_experiment(self):
+        for i in range(self.n_perms):
+            dataset2_perm = self.dataset2[torch.randperm(self.perm_size)]
+            dataset1_perm = self.dataset1[torch.randperm(self.perm_size)]
+            for metric in self.metrics:
+                self.results_df.loc[i, metric.name] = metric(dataset1_perm, dataset2_perm).numpy()
+
+    def plot_results(self):
+        pass
+</div>
 </div>
 </div>
 </div>
@@ -1504,7 +1534,7 @@ class ComparisonExperiment:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [193]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy for="cell-4">
@@ -1522,23 +1552,33 @@ class ComparisonExperiment:
            <span class="n">sliced_wasserstein_distance</span><span class="p">,</span>
            <span class="n">num_projections</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
            <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+    <span class="n">Metric</span><span class="p">(</span><span class="s1">'sliced_wasserstein_distance'</span><span class="p">,</span> 
+           <span class="n">sliced_wasserstein_distance</span><span class="p">,</span>
+           <span class="n">num_projections</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+           <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">Metric</span><span class="p">(</span><span class="s1">'sliced_wasserstein_distance'</span><span class="p">,</span> 
+           <span class="n">sliced_wasserstein_distance</span><span class="p">,</span>
+           <span class="n">num_projections</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+           <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
 <span class="p">]</span>
 
 <span class="n">experiments</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">ComparisonExperiment</span><span class="p">(</span>
-        <span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset1</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>
-        <span class="s1">'unconditional within-group real data'</span>
+    <span class="n">DistComp</span><span class="p">(</span>
+        <span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset1</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">n_perms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">perm_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">descr</span><span class="o">=</span><span class="s1">'unconditional within-group real data'</span>
     <span class="p">),</span>
-    <span class="n">ComparisonExperiment</span><span class="p">(</span>
-        <span class="n">dataset2</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>
-        <span class="s1">'unconditional within-group generated data'</span>
+    <span class="n">DistComp</span><span class="p">(</span>
+        <span class="n">dataset2</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">n_perms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">perm_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">descr</span><span class="o">=</span><span class="s1">'unconditional within-group generated data'</span>
     <span class="p">),</span>
-    <span class="n">ComparisonExperiment</span><span class="p">(</span>
-        <span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>
-        <span class="s1">'unconditional between-group'</span>
+    <span class="n">DistComp</span><span class="p">(</span>
+        <span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">n_perms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">perm_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">descr</span><span class="o">=</span><span class="s1">'unconditional between-group'</span>
     <span class="p">),</span>
-    
 <span class="p">]</span>
+
+<span class="k">for</span> <span class="n">experiment</span> <span class="ow">in</span> <span class="n">experiments</span><span class="p">:</span>
+    <span class="n">experiment</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">()</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-4">
 metrics = [
@@ -1546,24 +1586,151 @@ metrics = [
            sliced_wasserstein_distance,
            num_projections=50,
            p=2),
+    Metric('sliced_wasserstein_distance', 
+           sliced_wasserstein_distance,
+           num_projections=50,
+           p=1),
+    Metric('sliced_wasserstein_distance', 
+           sliced_wasserstein_distance,
+           num_projections=50,
+           p=1),
 ]
 
 experiments = [
-    ComparisonExperiment(
-        dataset1, dataset1, metrics,
-        'unconditional within-group real data'
+    DistComp(
+        dataset1, dataset1, metrics, n_perms=10, perm_size=1,
+        descr='unconditional within-group real data'
     ),
-    ComparisonExperiment(
-        dataset2, dataset2, metrics,
-        'unconditional within-group generated data'
+    DistComp(
+        dataset2, dataset2, metrics, n_perms=10, perm_size=1,
+        descr='unconditional within-group generated data'
     ),
-    ComparisonExperiment(
-        dataset1, dataset2, metrics,
-        'unconditional between-group'
+    DistComp(
+        dataset1, dataset2, metrics, n_perms=10, perm_size=1,
+        descr='unconditional between-group'
     ),
-    
 ]
+
+for experiment in experiments:
+    experiment.run_experiment()
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [194]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy for="cell-5">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">for</span> <span class="n">experiment</span> <span class="ow">in</span> <span class="n">experiments</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plotting experiment: </span><span class="si">{</span><span class="n">experiment</span><span class="o">.</span><span class="n">descr</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">results_df</span><span class="p">)</span>
+    <span class="c1"># experiment.plot_results()</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-5">for experiment in experiments:
+    print(f"Plotting experiment: {experiment.descr}")
+    print(experiment.results_df)
+    # experiment.plot_results()</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Plotting experiment: unconditional within-group real data
+   sliced_wasserstein_distance  sliced_wasserstein_distance  \
+0                          0.0                          0.0   
+1                          0.0                          0.0   
+2                          0.0                          0.0   
+3                          0.0                          0.0   
+4                          0.0                          0.0   
+5                          0.0                          0.0   
+6                          0.0                          0.0   
+7                          0.0                          0.0   
+8                          0.0                          0.0   
+9                          0.0                          0.0   
+
+   sliced_wasserstein_distance  
+0                          0.0  
+1                          0.0  
+2                          0.0  
+3                          0.0  
+4                          0.0  
+5                          0.0  
+6                          0.0  
+7                          0.0  
+8                          0.0  
+9                          0.0  
+Plotting experiment: unconditional within-group generated data
+   sliced_wasserstein_distance  sliced_wasserstein_distance  \
+0                          0.0                          0.0   
+1                          0.0                          0.0   
+2                          0.0                          0.0   
+3                          0.0                          0.0   
+4                          0.0                          0.0   
+5                          0.0                          0.0   
+6                          0.0                          0.0   
+7                          0.0                          0.0   
+8                          0.0                          0.0   
+9                          0.0                          0.0   
+
+   sliced_wasserstein_distance  
+0                          0.0  
+1                          0.0  
+2                          0.0  
+3                          0.0  
+4                          0.0  
+5                          0.0  
+6                          0.0  
+7                          0.0  
+8                          0.0  
+9                          0.0  
+Plotting experiment: unconditional between-group
+   sliced_wasserstein_distance  sliced_wasserstein_distance  \
+0                     0.251259                     0.251259   
+1                     0.251387                     0.251387   
+2                     0.286034                     0.286034   
+3                     0.291807                     0.291807   
+4                     0.238574                     0.238574   
+5                     0.241275                     0.241275   
+6                     0.301774                     0.301774   
+7                     0.282948                     0.282948   
+8                     0.278921                     0.278921   
+9                     0.223074                     0.223074   
+
+   sliced_wasserstein_distance  
+0                     0.251259  
+1                     0.251387  
+2                     0.286034  
+3                     0.291807  
+4                     0.238574  
+5                     0.241275  
+6                     0.301774  
+7                     0.282948  
+8                     0.278921  
+9                     0.223074  
+</pre>
 </div>
 </div>
 </div>
