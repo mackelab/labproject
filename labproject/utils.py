@@ -3,6 +3,7 @@ import numpy as np
 import random
 import inspect
 import os
+import datetime
 
 from omegaconf import OmegaConf
 
@@ -46,3 +47,22 @@ def get_cfg() -> OmegaConf:
         msg = f"Config file not found for {name}. Please create a config file at ../configs/conf_{name}.yaml"
         raise FileNotFoundError(msg)
     return config
+
+
+def get_log_path(cfg):
+    """
+    Get the log path for the current experiment run.
+    This log path is then used to save the numerical results of the experiment.
+    Import this function in the run_{name}.py file and call it to get the log path.
+    """
+
+    # get datetime string
+    now = datetime.datetime.now()
+    if "exp_log_name" not in cfg:
+        exp_log_name = now.strftime("%Y-%m-%d_%H-%M-%S")
+    else:
+        exp_log_name = cfg.exp_log_name
+        # add datetime to the name
+        exp_log_name = exp_log_name + "_" + now.strftime("%Y-%m-%d_%H-%M-%S")
+    log_path = os.path.join(f"results/{cfg.running_user}/{exp_log_name}.pkl")
+    return log_path
