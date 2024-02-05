@@ -1,6 +1,7 @@
 import torch
-from .metrics import sliced_wasserstein_distance, gaussian_kl_divergence
-from .plotting import plot_scaling_metric_dimensionality
+from metrics import sliced_wasserstein_distance, gaussian_kl_divergence
+from plotting import plot_scaling_metric_dimensionality
+from metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
 import pickle
 
 
@@ -19,7 +20,6 @@ class Experiment:
 
 
 class ScaleDim(Experiment):
-
     def __init__(self, metric_name, metric_fn, min_dim=1, max_dim=1000, step=100):
         self.metric_name = metric_name
         self.metric_fn = metric_fn
@@ -53,3 +53,19 @@ class ScaleDimKL(ScaleDim):
 class ScaleDimSW(ScaleDim):
     def __init__(self):
         super().__init__("Sliced Wasserstein", sliced_wasserstein_distance)
+
+
+class CIFAR10_FID_Train_Test(Experiment):
+    def __init__(self):
+        super().__init__()
+
+    def run_experiment(self, dataset1, dataset2):
+        fid_metric = gaussian_squared_w2_distance(dataset1, dataset2)
+        return fid_metric
+
+    def log_results(self, fid_metric, log_path):
+        with open(log_path, "wb") as f:
+            pickle.dump(fid_metric, f)
+
+    def plot_experiment(self, fid_metric, dataset_name):
+        pass
