@@ -149,3 +149,5 @@ figures/
 .idea/
 
 secrets.py
+
+results/
