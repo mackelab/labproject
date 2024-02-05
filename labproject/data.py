@@ -108,7 +108,10 @@ def register_dataset(name: str) -> callable:
                 warnings.warn("d is not specified, make sure you know what you're doing!")
 
             # Call the original function
-            dataset = func(n, d, **kwargs)
+            if d is not None:
+                dataset = func(n, d, **kwargs)
+            else:
+                dataset = func(n, **kwargs)
 
             # Convert the dataset to a PyTorch tensor
             dataset = torch.Tensor(dataset) if not isinstance(dataset, torch.Tensor) else dataset
