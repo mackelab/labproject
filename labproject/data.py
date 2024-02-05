@@ -5,6 +5,8 @@ from requests.auth import HTTPBasicAuth
 import os
 import functools
 
+from torch.distributions import MultivariateNormal, Categorical
+
 from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset, Subset
@@ -25,6 +27,7 @@ HETZNER_STORAGEBOX_PASSWORD = os.getenv("HETZNER_STORAGEBOX_PASSWORD")
 ## Hetzner Storage Box API functions ----
 
 DATASETS = {}
+DISTRIBUTIONS = {}
 
 
 def upload_file(local_path: str, remote_path: str):
@@ -135,6 +138,47 @@ def get_dataset(name: str) -> torch.Tensor:
     return DATASETS[name]
 
 
+def register_distribution(name: str) -> callable:
+    r"""This decorator wrapps a function that should return a dataset and ensures that the dataset is a PyTorch tensor, with the correct shape.
+
+    Args:
+        func (callable): Dataset generator function
+
+    Returns:
+        callable: Dataset generator function wrapper
+
+    Example:
+        >>> @register_dataset("random")
+        >>> def random_dataset(n=1000, d=10):
+        >>>     return torch.randn(n, d)
+    """
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            # Call the original function
+            distribution = func(*args, **kwargs)
+            return distribution
+
+        DISTRIBUTIONS[name] = wrapper
+        return wrapper
+
+    return decorator
+
+
+def get_distribution(name: str) -> torch.Tensor:
+    r"""Get a distribution by name
+
+    Args:
+        name (str): Name of the distribution
+
+    Returns:
+        torch.Tensor: Distribution
+    """
+    assert name in DISTRIBUTIONS, f"Distribution {name} not found, please register it first "
+    return DISTRIBUTIONS[name]
+
+
 def load_cifar10(
     n: int, save_path="data", train=True, batch_size=100, shuffle=False, num_workers=1, device="cpu"
 ) -> torch.Tensor:
@@ -182,6 +226,60 @@ def random_dataset(n=1000, d=10):
     return torch.randn(n, d)
 
 
+@register_distribution("normal")
+def normal_distribution():
+    return torch.distributions.Normal(0, 1)
+
+
+@register_distribution("normal")
+def normal_distribution():
+    return torch.distributions.Normal(0, 1)
+
+
+@register_distribution("toy_2d")
+def toy_mog_2d():
+    class Toy2D:
+        def __init__(self):
+            self.means = torch.tensor(
+                [
+                    [0.0, 0.5],
+                    [-3.0, -0.5],
+                    [0.0, -1.0],
+                    [-4.0, -3.0],
+                ]
+            )
+            self.covariances = torch.tensor(
+                [
+                    [[1.0, 0.8], [0.8, 1.0]],
+                    [[1.0, -0.5], [-0.5, 1.0]],
+                    [[1.0, 0.0], [0.0, 1.0]],
+                    [[0.5, 0.0], [0.0, 0.5]],
+                ]
+            )
+            self.weights = torch.tensor([0.2, 0.3, 0.3, 0.2])
+
+            # Create a list of 2D Gaussian distributions
+            self.gaussians = [
+                MultivariateNormal(mean, covariance)
+                for mean, covariance in zip(self.means, self.covariances)
+            ]
+
+        def sample(self, sample_shape):
+            if isinstance(sample_shape, int):
+                sample_shape = (sample_shape,)
+            # Sample from the mixture
+            categorical = Categorical(self.weights)
+            sample_indices = categorical.sample(sample_shape)
+            return torch.stack([self.gaussians[i].sample() for i in sample_indices])
+
+        def log_prob(self, input):
+            probs = torch.stack([g.log_prob(input).exp() for g in self.gaussians])
+            probs = probs.T * self.weights
+            return torch.sum(probs, dim=1).log()
+
+    return Toy2D()
+
+
 @register_dataset("cifar10_train")
 def cifar10_train(n=1000, d=2048, save_path="data", device="cpu"):
 
@@ -201,6 +299,8 @@ def cifar10_train(n=1000, d=2048, save_path="data", device="cpu"):
 
 @register_dataset("cifar10_test")
 def cifar10_test(n=1000, d=2048, save_path="data", device="cpu"):
+
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
 
     assert d is None or d == 2048, "The dimensionality of the embeddings must be 2048"
 
