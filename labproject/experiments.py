@@ -1,6 +1,6 @@
 import torch
-from metrics import sliced_wasserstein_distance, gaussian_kl_divergence
-from plotting import plot_scaling_metric_dimensionality
+from .metrics import sliced_wasserstein_distance, gaussian_kl_divergence
+from .plotting import plot_scaling_metric_dimensionality
 import pickle
 
 
