@@ -239,7 +239,7 @@ def normal_distribution():
 
 
 @register_distribution("toy_2d")
-def toy_2d():
+def toy_mog_2d():
     class Toy2D:
         def __init__(self):
             self.means = torch.tensor(
