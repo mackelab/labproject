@@ -54,13 +54,15 @@ def gaussian_squared_w2_distance(real_samples: Tensor, fake_samples: Tensor) -> 
     cov_fake = torch.cov(fake_samples.t())
 
     # ensure the covariance matrices are invertible
-    eps = 1e-8
+    eps = 1e-6
     cov_real += torch.eye(cov_real.size(0)) * eps
     cov_fake += torch.eye(cov_fake.size(0)) * eps
 
     # compute KL divergence
     mean_dist = torch.norm(mu_real - mu_fake, p=2)
-    cov_sqrt = torch.from_numpy(scipy.linalg.sqrtm((cov_real @ cov_fake).numpy().real))
+    cov_sqrt = scipy.linalg.sqrtm((cov_real @ cov_fake).numpy())
+    # print(cov_sqrt.real)
+    cov_sqrt = torch.from_numpy(cov_sqrt.real)
     cov_dist = torch.trace(cov_real + cov_fake - 2 * cov_sqrt)
     w2_squared_dist = mean_dist**2 + cov_dist
 
