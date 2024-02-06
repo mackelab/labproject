@@ -84,16 +84,14 @@ def plot_scaling_metric_sample_size(
                 linestyle=linestyle,
                 **kwargs,
             )
-            if errors is not None:
-                plt.fill_between(
-                    sample_size, distances - errors, distances + errors, alpha=0.2, color=color
-                )
+            plt.fill_between(
+                sample_size, distances - errors, distances + errors, alpha=0.2, color=color
+            )
         else:
             plt.plot(sample_size, distances, label=metric_name, linestyle=linestyle, **kwargs)
-            if errors is not None:
-                plt.fill_between(
-                    sample_size, distances - errors, distances + errors, alpha=0.2, color=color
-                )
+            plt.fill_between(
+                sample_size, distances - errors, distances + errors, alpha=0.2, color=color
+            )
         plt.xlabel("samples")
         plt.ylabel(metric_name)
         plt.title(f"{metric_name} with increasing sample size for {dataset_name}")
@@ -114,16 +112,14 @@ def plot_scaling_metric_sample_size(
                 linestyle=linestyle,
                 **kwargs,
             )
-            if errors is not None:
-                ax.fill_between(
-                    sample_size, distances - errors, distances + errors, alpha=0.2, color=color
-                )
+            ax.fill_between(
+                sample_size, distances - errors, distances + errors, alpha=0.2, color=color
+            )
         else:
             ax.plot(sample_size, distances, label=metric_name if label is None else label, **kwargs)
-            if errors is not None:
-                ax.fill_between(
-                    sample_size, distances - errors, distances + errors, alpha=0.2, color=color
-                )
+            ax.fill_between(
+                sample_size, distances - errors, distances + errors, alpha=0.2, color=color
+            )
         ax.set_xlabel("samples")
         ax.set_ylabel(metric_name, color=color)
 
