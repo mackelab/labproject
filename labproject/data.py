@@ -369,7 +369,7 @@ def imagenet_real_embeddings(n=1000, d=2048):
 
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
 
-    data_dir = os.path.join(os.path.abspath(__file__).parent.parent, "data/imagenet/")
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data/imagenet/")
     if not os.path.exists(os.path.join(data_dir, "imagenet_test_dataset_embeddings.pt")):
         raise FileNotFoundError(
             f"No file `data/imagenet/imagenet_test_dataset_embeddings.pt` found"
@@ -387,7 +387,7 @@ def imagenet_uncond_embeddings(n=1000, d=2048):
 
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
 
-    data_dir = os.path.join(os.path.abspath(__file__).parent.parent, "data/imagenet/")
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data/imagenet/")
     if not os.path.exists(
         os.path.join(data_dir, "samples_50k_unconditional_moresteps_embeddings.pt")
     ):
