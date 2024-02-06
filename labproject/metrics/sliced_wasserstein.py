@@ -3,8 +3,10 @@
 
 import torch
 from torch import Tensor
+from labproject.metrics.utils import register_metric
 
 
+@register_metric("sliced_wasserstein")
 def sliced_wasserstein_distance(
     encoded_samples: Tensor,
     distribution_samples: Tensor,
