@@ -112,10 +112,15 @@ def register_dataset(name: str) -> callable:
                 dataset = func(n, d, **kwargs)
             else:
                 dataset = func(n, **kwargs)
-
-            # Convert the dataset to a PyTorch tensor
-            dataset = torch.Tensor(dataset) if not isinstance(dataset, torch.Tensor) else dataset
-
+            if isinstance(dataset, tuple):
+                dataset = tuple(
+                    torch.Tensor(data) if not isinstance(data, torch.Tensor) else data
+                    for data in dataset
+                )
+            else:
+                dataset = (
+                    torch.Tensor(dataset) if not isinstance(dataset, torch.Tensor) else dataset
+                )
             assert dataset.shape == (n, d), f"Dataset shape must be {(n, d)}"
 
             return dataset
@@ -183,7 +188,14 @@ def get_distribution(name: str) -> torch.Tensor:
 
 
 def load_cifar10(
-    n: int, save_path="data", train=True, batch_size=100, shuffle=False, num_workers=1, device="cpu"
+    n: int,
+    save_path="data",
+    train=True,
+    batch_size=100,
+    shuffle=False,
+    num_workers=1,
+    device="cpu",
+    return_labels=False,
 ) -> torch.Tensor:
     """Load a subset of cifar10
 
@@ -213,6 +225,9 @@ def load_cifar10(
         dataset_subset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
     )
     net = FIDEmbeddingNet(device=device)
+    if return_labels:
+        embeddings, labels = net.get_embeddings_with_labels(dataloader)
+        return embeddings, labels
     embeddings = net.get_embeddings(dataloader)
     return embeddings
 
@@ -289,11 +304,15 @@ def toy_mog_2d():
 
 
 @register_dataset("cifar10_train")
-def cifar10_train(n=1000, d=2048, save_path="data", device="cpu"):
+def cifar10_train(n=1000, d=2048, save_path="data", device="cpu", return_labels=False):
 
     assert d is None or d == 2048, "The dimensionality of the embeddings must be 2048"
 
-    embeddings = load_cifar10(n, save_path=save_path, train=True, device=device)
+    embeddings = load_cifar10(
+        n, save_path=save_path, train=True, device=device, return_labels=return_labels
+    )
+    if return_labels:
+        embeddings, labels = embeddings
     # to cpu if necessary
     if device == "cuda":
         embeddings = embeddings.cpu()
@@ -301,18 +320,25 @@ def cifar10_train(n=1000, d=2048, save_path="data", device="cpu"):
     max_n = embeddings.shape[0]
 
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    if return_labels:
+        return embeddings[:n], labels[:n]
 
     return embeddings[:n]
 
 
 @register_dataset("cifar10_test")
-def cifar10_test(n=1000, d=2048, save_path="data", device="cpu"):
+def cifar10_test(n=1000, d=2048, save_path="data", device="cpu", return_labels=False):
 
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
 
     assert d is None or d == 2048, "The dimensionality of the embeddings must be 2048"
 
-    embeddings = load_cifar10(n, save_path=save_path, train=False, device=device)
+    embeddings = load_cifar10(
+        n, save_path=save_path, train=False, device=device, return_labels=return_labels
+    )
+    if return_labels:
+        embeddings, labels = embeddings
     # to cpu if necessary
     if device == "cuda":
         embeddings = embeddings.cpu()
@@ -320,5 +346,8 @@ def cifar10_test(n=1000, d=2048, save_path="data", device="cpu"):
     max_n = embeddings.shape[0]
 
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    if return_labels:
+        return embeddings[:n], labels[:n]
 
     return embeddings[:n]
