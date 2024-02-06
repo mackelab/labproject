@@ -30,6 +30,13 @@ color_dict = {"wasserstein": "#cc241d", "mmd": "#eebd35", "c2st": "#458588", "fi
 ###
 
 
+def cm2inch(cm, INCH=2.54):
+    if isinstance(cm, tuple):
+        return tuple(i / INCH for i in cm)
+    else:
+        return cm / INCH
+
+
 def plot_scaling_metric_dimensionality(
     dimensionality, distances, metric_name, dataset_name, ax=None
 ):
@@ -54,16 +61,29 @@ def plot_scaling_metric_dimensionality(
 
 
 def plot_scaling_metric_sample_size(
-    sample_size, distances, metric_name, dataset_name, ax=None, color=None, label=None
+    sample_size,
+    distances,
+    metric_name,
+    dataset_name,
+    ax=None,
+    color=None,
+    label=None,
+    linestyle="-",
+    **kwargs,
 ):
     """Plot the behavior of a metric with number of samples."""
     if ax is None:
         if color is not None:
             plt.plot(
-                sample_size, distances, color=color, label=metric_name if label is None else label
+                sample_size,
+                distances,
+                color=color,
+                label=metric_name if label is None else label,
+                linestyle=linestyle,
+                **kwargs,
             )
         else:
-            plt.plot(sample_size, distances, label=metric_name)
+            plt.plot(sample_size, distances, label=metric_name, linestyle=linestyle, **kwargs)
         plt.xlabel("samples")
         plt.ylabel(metric_name)
         plt.title(f"{metric_name} with increasing sample size for {dataset_name}")
@@ -77,10 +97,16 @@ def plot_scaling_metric_sample_size(
     else:
         if color is not None:
             ax.plot(
-                sample_size, distances, color=color, label=metric_name if label is None else label
+                sample_size,
+                distances,
+                label=metric_name if label is None else label,
+                color=color,
+                linestyle=linestyle,
+                **kwargs,
             )
         else:
-            ax.plot(sample_size, distances, label=metric_name if label is None else label)
+            ax.plot(sample_size, distances, label=metric_name if label is None else label, **kwargs)
         ax.set_xlabel("samples")
+        ax.set_ylabel(metric_name, color=color)
 
         return ax

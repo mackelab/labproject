@@ -57,24 +57,49 @@ class ScaleDimSW(ScaleDim):
 
 class ScaleSampleSize(Experiment):
 
-    def __init__(self, metric_name, metric_fn, min_samples=2, max_samples=1000, step=100):
-        assert min_samples > 1, "min_samples must be greater than 1"
+    def __init__(
+        self, metric_name, metric_fn, min_samples=3, max_samples=2000, step=100, sample_sizes=None
+    ):
+        assert min_samples > 2, "min_samples must be greater than 2 to compute covariance for KL"
         self.metric_name = metric_name
         self.metric_fn = metric_fn
-        self.sample_sizes = list(range(min_samples, max_samples, step))
+        # TODO: add logarithmic scale or only keep pass in run experiment
+        if sample_sizes is not None:
+            self.sample_sizes = sample_sizes
+        else:
+            self.sample_sizes = list(range(min_samples, max_samples, step))
+        print(self.sample_sizes)
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2):
+    def run_experiment(self, dataset1, dataset2, sample_sizes=None):
         distances = []
-        for n in self.sample_sizes:
+        if sample_sizes is None:
+            sample_sizes = self.sample_sizes
+        for n in sample_sizes:
             distances.append(self.metric_fn(dataset1[:n, :], dataset2[:n, :]))
-        return self.sample_sizes, distances
+        return sample_sizes, distances
 
     def plot_experiment(
-        self, sample_sizes, distances, dataset_name, ax=None, color=None, label=None
+        self,
+        sample_sizes,
+        distances,
+        dataset_name,
+        ax=None,
+        color=None,
+        label=None,
+        linestyle="-",
+        **kwargs
     ):
         plot_scaling_metric_sample_size(
-            sample_sizes, distances, self.metric_name, dataset_name, ax=ax, color=color, label=label
+            sample_sizes,
+            distances,
+            self.metric_name,
+            dataset_name,
+            ax=ax,
+            color=color,
+            label=label,
+            linestyle=linestyle,
+            **kwargs
         )
 
     def log_results(self, results, log_path):
@@ -86,13 +111,25 @@ class ScaleSampleSize(Experiment):
 
 
 class ScaleSampleSizeKL(ScaleSampleSize):
-    def __init__(self):
-        super().__init__("KL", gaussian_kl_divergence)
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "KL",
+            gaussian_kl_divergence,
+            min_samples=min_samples,
+            sample_sizes=sample_sizes,
+            **kwargs
+        )
 
 
 class ScaleSampleSizeSW(ScaleSampleSize):
-    def __init__(self):
-        super().__init__("Sliced Wasserstein", sliced_wasserstein_distance)
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "Sliced Wasserstein",
+            sliced_wasserstein_distance,
+            min_samples=min_samples,
+            sample_sizes=sample_sizes,
+            **kwargs
+        )
 
 
 class CIFAR10_FID_Train_Test(Experiment):

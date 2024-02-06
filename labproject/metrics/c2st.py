@@ -75,7 +75,7 @@ def c2st_nn(
     ndim = X.shape[-1]
     defaults = {
         "activation": activation,
-        "hidden_layer_sizes": (10 * ndim, 10 * ndim),
+        "hidden_layer_sizes": (min(10 * ndim, 100), min(10 * ndim, 100)),
         "max_iter": 1000,
         "solver": "adam",
         "early_stopping": True,
