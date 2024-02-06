@@ -167,3 +167,6 @@ configs/conf_default.yaml
 
 configs/conf_default.yaml
 configs/conf_FIDinc.yaml
+
+# ImageNet
+data/*.pt

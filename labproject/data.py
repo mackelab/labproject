@@ -362,3 +362,51 @@ def cifar10_test(n=1000, d=2048, save_path="data", device="cpu", return_labels=F
         return embeddings[:n], labels[:n]
 
     return embeddings[:n]
+
+
+@register_dataset("imagenet_real_embeddings")
+def imagenet_real_embeddings(n=1000, d=2048):
+
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+
+    data_dir = os.path.join(os.path.abspath(__file__).parent.parent, "data/imagenet/")
+    if not os.path.exists(os.path.join(data_dir, "imagenet_test_dataset_embeddings.pt")):
+        raise FileNotFoundError(
+            f"No file `data/imagenet/imagenet_test_dataset_embeddings.pt` found"
+        )
+    embeddings = torch.load(os.path.join(data_dir, "imagenet_test_dataset_embeddings.pt"))
+
+    max_n = embeddings.shape[0]
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return embeddings[:n]
+
+
+@register_dataset("imagenet_uncond_embeddings")
+def imagenet_uncond_embeddings(n=1000, d=2048):
+
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+
+    data_dir = os.path.join(os.path.abspath(__file__).parent.parent, "data/imagenet/")
+    if not os.path.exists(
+        os.path.join(data_dir, "samples_50k_unconditional_moresteps_embeddings.pt")
+    ):
+        raise FileNotFoundError(
+            f"No file `data/imagenet/samples_50k_unconditional_moresteps_embeddings.pt` found"
+        )
+    embeddings = torch.load(
+        os.path.join(data_dir, "samples_50k_unconditional_moresteps_embeddings.pt")
+    )
+
+    max_n = embeddings.shape[0]
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return embeddings[:n]
+
+
+# @register_dataset("imagenet_cond_embeddings")
+# def imagenet_cond_embeddings(keep_labels=[]):
+#     data_dir = os.path.join(os.path.abspath(__file__).parent.parent, "data/")
+#     if not os.path.exists(os.path.join(data_dir, "samples_50k_unconditional_moresteps_embeddings.pt")):
+#         raise FileNotFoundError(f"No file `data/samples_50k_unconditional_moresteps_embeddings.pt` found")
+#     data = torch.load(os.path.join(data_dir, "samples_50k_unconditional_moresteps_embeddings.pt"))
