@@ -68,7 +68,6 @@ class ScaleSampleSize(Experiment):
         assert min_samples > 2, "min_samples must be greater than 2 to compute covariance for KL"
         self.metric_name = metric_name
         self.metric_fn = metric_fn
-        # TODO: add logarithmic scale or only keep pass in run experiment
         if sample_sizes is not None:
             self.sample_sizes = sample_sizes
         else:
@@ -79,6 +78,9 @@ class ScaleSampleSize(Experiment):
         """
         Computes for each subset 5 different random subsets and averages performance across the subsets.
         """
+        assert sample_sizes[-1] < dataset1.size(
+            0
+        ), "Sample size must be smaller than the dataset size."
         final_distances = []
         final_errors = []
         if sample_sizes is None:
@@ -101,16 +103,7 @@ class ScaleSampleSize(Experiment):
         return sample_sizes, final_distances, final_errors
 
     def plot_experiment(
-        self,
-        sample_sizes,
-        distances,
-        errors,
-        dataset_name,
-        ax=None,
-        color=None,
-        label=None,
-        linestyle="-",
-        **kwargs
+        self, sample_sizes, distances, errors, dataset_name, ax=None, label=None, **kwargs
     ):
         plot_scaling_metric_sample_size(
             sample_sizes,
@@ -119,9 +112,7 @@ class ScaleSampleSize(Experiment):
             self.metric_name,
             dataset_name,
             ax=ax,
-            color=color,
             label=label,
-            linestyle=linestyle,
             **kwargs
         )
 
