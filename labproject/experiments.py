@@ -1,5 +1,10 @@
 import torch
-from labproject.metrics import sliced_wasserstein_distance, gaussian_kl_divergence
+from labproject.metrics import (
+    sliced_wasserstein_distance,
+    gaussian_kl_divergence,
+    c2st_nn,
+    compute_rbf_mmd,
+)
 from labproject.plotting import plot_scaling_metric_dimensionality, plot_scaling_metric_sample_size
 from labproject.metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
 import pickle
@@ -68,7 +73,6 @@ class ScaleSampleSize(Experiment):
             self.sample_sizes = sample_sizes
         else:
             self.sample_sizes = list(range(min_samples, max_samples, step))
-        print(self.sample_sizes)
         super().__init__()
 
     def run_experiment(self, dataset1, dataset2, sample_sizes=None):
@@ -129,6 +133,20 @@ class ScaleSampleSizeSW(ScaleSampleSize):
             min_samples=min_samples,
             sample_sizes=sample_sizes,
             **kwargs
+        )
+
+
+class ScaleSampleSizeC2ST(ScaleSampleSize):
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "C2ST", c2st_nn, min_samples=min_samples, sample_sizes=sample_sizes, **kwargs
+        )
+
+
+class ScaleSampleSizeMMD(ScaleSampleSize):
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "MMD", compute_rbf_mmd, min_samples=min_samples, sample_sizes=sample_sizes, **kwargs
         )
 
 
