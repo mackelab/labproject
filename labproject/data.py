@@ -254,6 +254,17 @@ def normal_distribution():
     return torch.distributions.Normal(0, 1)
 
 
+@register_dataset("multivariate_normal")
+def multivariate_normal(means=None, vars=None, dims=100):
+    if means is None:
+        means = torch.zeros(dims)
+    if vars is None:
+        vars = torch.eye(dims)
+    else:
+        vars = torch.diag(vars)
+    return torch.distributions.MultivariateNormal(means, vars)
+
+
 @register_dataset("toy_2d")
 def toy_2d(n=1000, d=2):
     return toy_mog_2d().sample(n)

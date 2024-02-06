@@ -1,4 +1,5 @@
 import torch
+import warnings
 from labproject.metrics.utils import register_metric
 
 
@@ -28,6 +29,11 @@ def sinkhorn_algorithm(
 
     assert len(x.shape) == 2 and len(y.shape) == 2, "x and y must be 2D"
     n, d = x.shape
+    n_warn = 1000
+    if n > n_warn:
+        warnings.warn(
+            f"The Sinkhorn algorithm is O(n^2) in the number of samples and can be slow, consider using a different metric or reducing number of samples (n_warn={n_warn})"
+        )
 
     # Compute pairwise p-distances
     cost_matrix = torch.cdist(x.double(), y.double(), p=p)
@@ -55,6 +61,10 @@ def sinkhorn_algorithm(
         actual_niter += 1
         if err < thresh:
             break
+    if actual_niter == niter:
+        warnings.warn(
+            f"Sinkhorn algorithm did not converge after {niter} iterations, final error is {err}"
+        )
 
     U, V = u, v
     transport = torch.exp(MC(U, V))  # Transport plan pi = diag(a)*K*diag(b)
