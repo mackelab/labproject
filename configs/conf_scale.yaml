@@ -1,0 +1,9 @@
+exp_log_name: "all_samplesize" # optional but recommended
+data: ["toy_2d" , "random", "imagenet_real_embeddings"]
+experiments: ["ScaleSampleSizeSW", "ScaleSampleSizeC2ST", "ScaleSampleSizeMMD", "ScaleSampleSizeFID",]
+n: [10000, 10000, 10000]
+d: [2, 10, 2048]
+augmentation: ['gauss', 'one_dim_shift', 'imagenet_uncond_embeddings']
+
+seed: 0
+runs: 5
