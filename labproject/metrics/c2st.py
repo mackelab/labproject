@@ -2,6 +2,7 @@ from typing import Any, Dict, Optional, Literal
 
 import numpy as np
 import torch
+import inspect
 from torch import ones, zeros, eye, sum, Tensor, tensor, allclose, manual_seed
 from torch.distributions import MultivariateNormal, Normal
 from sklearn.ensemble import RandomForestClassifier
@@ -19,6 +20,7 @@ def c2st_nn(
     seed: int = 1,
     n_folds: int = 5,
     metric: str = "accuracy",
+    z_score: bool = True,
     activation: Literal["identity", "logistic", "tanh", "relu"] = "relu",
     clf_kwargs: dict[str, Any] = {},
 ) -> Tensor:
@@ -45,8 +47,9 @@ def c2st_nn(
         seed: Seed for the sklearn classifier and the KFold cross-validation
         n_folds: Number of folds to use
         metric: sklearn compliant metric to use for the scoring parameter of cross_val_score
-        activation: activation function for the hidden layer
-        clf_kwargs: additional kwargs for `MLPClassifier`
+        z_score: Z-scoring using X, i.e. mean and std deviation of X is used to normalize Y, i.e. Y=(Y - mean)/std
+        activation: Activation function for the hidden layer
+        clf_kwargs: Additional kwargs for `MLPClassifier`
 
     Return:
         torch.tensor containing the mean accuracy score over the test sets
@@ -86,7 +89,7 @@ def c2st_nn(
         seed=seed,
         n_folds=n_folds,
         metric=metric,
-        z_score=True,
+        z_score=z_score,
         noise_scale=None,
         verbosity=0,
         clf_class=clf_class,
@@ -104,6 +107,7 @@ def c2st_rf(
     seed: int = 1,
     n_folds: int = 5,
     metric: str = "accuracy",
+    z_score: bool = True,
     n_estimators: int = 100,
     clf_kwargs: dict[str, Any] = {},
 ) -> Tensor:
@@ -130,8 +134,9 @@ def c2st_rf(
         seed: Seed for the sklearn classifier and the KFold cross-validation
         n_folds: Number of folds to use
         metric: sklearn compliant metric to use for the scoring parameter of cross_val_score
-        n_estimators: the number of trees in the forest
-        clf_kwargs: additional kwargs for `RandomForestClassifier`
+        z_score: Z-scoring using X, i.e. mean and std deviation of X is used to normalize Y, i.e. Y=(Y - mean)/std
+        n_estimators: The number of trees in the forest
+        clf_kwargs: Additional kwargs for `RandomForestClassifier`
 
     Return:
         torch.tensor containing the mean accuracy score over the test sets
@@ -162,7 +167,7 @@ def c2st_rf(
         seed=seed,
         n_folds=n_folds,
         metric=metric,
-        z_score=True,
+        z_score=z_score,
         noise_scale=None,
         verbosity=0,
         clf_class=clf_class,
@@ -180,6 +185,7 @@ def c2st_knn(
     seed: int = 1,
     n_folds: int = 5,
     metric: str = "accuracy",
+    z_score: bool = True,
     n_neighbors: int = 5,
     clf_kwargs: dict = {},
 ) -> Tensor:
@@ -206,8 +212,9 @@ def c2st_knn(
         seed: Seed for the sklearn classifier and the KFold cross-validation
         n_folds: Number of folds to use
         metric: sklearn compliant metric to use for the scoring parameter of cross_val_score
-        n_neighbors: the number of neighbors to use by default for `kneighbors` queries
-        clf_kwargs: additional kwargs for `KNeighborsClassifier`
+        z_score: Z-scoring using X, i.e. mean and std deviation of X is used to normalize Y, i.e. Y=(Y - mean)/std
+        n_neighbors: The number of neighbors to use by default for `kneighbors` queries
+        clf_kwargs: Additional kwargs for `KNeighborsClassifier`
 
     Return:
         torch.tensor containing the mean accuracy score over the test sets
@@ -238,7 +245,7 @@ def c2st_knn(
         seed=seed,
         n_folds=n_folds,
         metric=metric,
-        z_score=True,
+        z_score=z_score,
         noise_scale=None,
         verbosity=0,
         clf_class=clf_class,
@@ -332,7 +339,9 @@ def c2st_scores(
     X = X.cpu().numpy()
     Y = Y.cpu().numpy()
 
-    clf = clf_class(random_state=seed, **clf_kwargs)
+    if "random_state" in inspect.signature(clf_class.__init__).parameters.keys():
+        clf_kwargs["random_state"] = seed
+    clf = clf_class(**clf_kwargs)
 
     # prepare data
     data = np.concatenate((X, Y))
@@ -382,3 +391,15 @@ def test_optimal_c2st():
     c2st = c2st_optimal(d1, d2, 100_000)
     target = Normal(0.0, 1.0).cdf(tensor(mean_diff // 2))
     assert allclose(c2st, target, atol=1e-3)
+
+
+if __name__ == "__main__":
+    # Generate random samples
+    samples1 = torch.randn(100, 2)
+    samples2 = torch.randn(100, 2)
+
+    # Compute sliced wasserstein distance
+    c2st_nn_score = c2st_nn(samples1, samples2)
+    c2st_knn_score = c2st_knn(samples1, samples2)
+    c2st_rf_score = c2st_rf(samples1, samples2)
+    print(f"C2ST-NN: {c2st_nn_score}\nC2ST-KNN: {c2st_knn_score}\nC2ST-RF: {c2st_rf_score}")

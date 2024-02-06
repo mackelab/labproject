@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+data/
 plots/
 build/
 develop-eggs/
@@ -151,3 +152,4 @@ figures/
 secrets.py
 
 results/
+.vscode/settings.json

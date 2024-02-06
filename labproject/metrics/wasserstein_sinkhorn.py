@@ -1,7 +1,9 @@
 import torch
 
 
-def sinkhorn_loss(x: torch.Tensor, y: torch.Tensor, epsilon: float, niter: int = 100, p: int = 2):
+def sinkhorn_algorithm(
+    x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 1000, p: int = 2
+):
     r"""Compute the sinkhorn approximation to the Wasserstein-p distance between two sets of samples.
     The sinkhorn algorithm adds a small entropy regularization term to the empirical Wasserstein distance.
     Hence this function solves the modified optimal transport problem:
@@ -27,8 +29,7 @@ def sinkhorn_loss(x: torch.Tensor, y: torch.Tensor, epsilon: float, niter: int =
     n, d = x.shape
 
     # Compute pairwise p-distances
-    cost_matrix = torch.cdist(x.unsqueeze(0).double(), y.unsqueeze(0).double(), p=p)
-
+    cost_matrix = torch.cdist(x.double(), y.double(), p=p)
     K = torch.exp(-cost_matrix / epsilon)
     a = torch.ones(n, dtype=torch.double) / n
     b = torch.ones(n, dtype=torch.double) / n
@@ -40,15 +41,16 @@ def sinkhorn_loss(x: torch.Tensor, y: torch.Tensor, epsilon: float, niter: int =
 
     err = 1e6
     actual_niter = 0  # count number of iterations
-    thresh = 1e-2
+    thresh = 1e-6
     u, v = torch.zeros(n, dtype=torch.double), torch.zeros(n, dtype=torch.double)
 
     # Sinkhorn loop
     for actual_niter in range(niter):
         u1 = u
+        v1 = v
         u = epsilon * (torch.log(a) - torch.logsumexp(MC(u, v), dim=1)) + u
         v = epsilon * (torch.log(b) - torch.logsumexp(MC(u, v).T, dim=1)) + v
-        err = torch.max((u - u1).abs().sum(), (v - v).abs().sum())
+        err = torch.max((u - u1).abs().sum(), (v1 - v).abs().sum())
         actual_niter += 1
         if err < thresh:
             break
@@ -57,7 +59,14 @@ def sinkhorn_loss(x: torch.Tensor, y: torch.Tensor, epsilon: float, niter: int =
     transport = torch.exp(MC(U, V))  # Transport plan pi = diag(a)*K*diag(b)
     cost = torch.sum(transport * cost_matrix)  # Sinkhorn cost
 
-    return cost
+    return cost, transport
+
+
+def sinkhorn_loss(
+    x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 1000, p: int = 2
+):
+    loss, transport = sinkhorn_algorithm(x, y, epsilon, niter, p)
+    return loss
 
 
 if __name__ == "__main__":

@@ -7,30 +7,40 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+from labproject.external.inception_v3 import InceptionV3, get_inception_v3_activations
+
 
 # Abstract class for embedding nets
 class EmbeddingNet(nn.Module):
     def __init__(self):
         super(EmbeddingNet, self).__init__()
-        self.embedding = None
+        self.embedding_net = None
 
     def forward(self, x):
-        return self.embedding(x)
+        return self.embedding_net(x)
 
     def get_embedding(self, x):
-        return self.forward(x).detach().cpu().numpy()
+        raise NotImplementedError("Subclasses must implement this method")
+
+    def get_embeddings(self, dataloader):
+        raise NotImplementedError("Subclasses must implement this method")
+
+
+class FIDEmbeddingNet(EmbeddingNet):
+    def __init__(self, image_model=None, device="cpu"):
+        super(FIDEmbeddingNet, self).__init__()
+        self.embedding_net = image_model if image_model is not None else InceptionV3()
+        self.device = device
+        self.embedding_net = self.embedding_net.to(device)
 
     def get_embeddings(self, dataloader):
         embeddings = []
         for batch in dataloader:
-            embeddings.append(self.get_embedding(batch[0]))
-        return np.concatenate(embeddings)
-
-
-class FIDEmbeddingNet(EmbeddingNet):
-    def __init__(self, image_model):
-        super(FIDEmbeddingNet, self).__init__()
-        self.embedding = image_model
+            embeddings += [
+                get_inception_v3_activations(self.embedding_net, batch[0].to(self.device))
+            ]
+        embeddings = torch.cat(embeddings, dim=0)
+        return embeddings
 
     # optional override of original methods
 

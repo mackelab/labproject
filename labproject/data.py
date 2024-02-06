@@ -10,9 +10,13 @@ from torch.distributions import MultivariateNormal, Categorical
 from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset, Subset
-from torchvision.models import inception_v3
+
+# from torchvision.models import inception_v3
+from labproject.external.inception_v3 import InceptionV3
 
 from labproject.embeddings import FIDEmbeddingNet
+
+import warnings
 
 
 STORAGEBOX_URL = os.getenv("HETZNER_STORAGEBOX_URL")
@@ -23,6 +27,7 @@ HETZNER_STORAGEBOX_PASSWORD = os.getenv("HETZNER_STORAGEBOX_PASSWORD")
 ## Hetzner Storage Box API functions ----
 
 DATASETS = {}
+DISTRIBUTIONS = {}
 
 
 def upload_file(local_path: str, remote_path: str):
@@ -97,10 +102,16 @@ def register_dataset(name: str) -> callable:
         def wrapper(n: int, d: Optional[int] = None, **kwargs):
 
             assert n > 0, "n must be a positive integer"
-            assert d > 0, "d must be a positive integer"
+            if d is not None:
+                assert d > 0, "d must be a positive integer"
+            else:
+                warnings.warn("d is not specified, make sure you know what you're doing!")
 
             # Call the original function
-            dataset = func(n, d, **kwargs)
+            if d is not None:
+                dataset = func(n, d, **kwargs)
+            else:
+                dataset = func(n, **kwargs)
 
             # Convert the dataset to a PyTorch tensor
             dataset = torch.Tensor(dataset) if not isinstance(dataset, torch.Tensor) else dataset
@@ -130,6 +141,47 @@ def get_dataset(name: str) -> torch.Tensor:
     return DATASETS[name]
 
 
+def register_distribution(name: str) -> callable:
+    r"""This decorator wrapps a function that should return a dataset and ensures that the dataset is a PyTorch tensor, with the correct shape.
+
+    Args:
+        func (callable): Dataset generator function
+
+    Returns:
+        callable: Dataset generator function wrapper
+
+    Example:
+        >>> @register_dataset("random")
+        >>> def random_dataset(n=1000, d=10):
+        >>>     return torch.randn(n, d)
+    """
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            # Call the original function
+            distribution = func(*args, **kwargs)
+            return distribution
+
+        DISTRIBUTIONS[name] = wrapper
+        return wrapper
+
+    return decorator
+
+
+def get_distribution(name: str) -> torch.Tensor:
+    r"""Get a distribution by name
+
+    Args:
+        name (str): Name of the distribution
+
+    Returns:
+        torch.Tensor: Distribution
+    """
+    assert name in DISTRIBUTIONS, f"Distribution {name} not found, please register it first "
+    return DISTRIBUTIONS[name]
+
+
 def load_cifar10(
     n: int, save_path="data", train=True, batch_size=100, shuffle=False, num_workers=1, device="cpu"
 ) -> torch.Tensor:
@@ -149,27 +201,18 @@ def load_cifar10(
     """
     transform = transforms.Compose(
         [
-            transforms.Resize((299, 299)),
             transforms.ToTensor(),
-            # normalize specific to inception model
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            # Move to GPU if available
-            transforms.Lambda(lambda x: x.to(device if torch.cuda.is_available() else "cpu")),
         ]
     )
     cifar10 = CIFAR10(root=save_path, train=train, download=True, transform=transform)
     dataloader = torch.utils.data.DataLoader(
         cifar10, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
     )
-    dataloader_subset = Subset(dataloader.dataset, range(n))
+    dataset_subset = Subset(dataloader.dataset, range(n))
     dataloader = DataLoader(
-        dataloader_subset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
+        dataset_subset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers
     )
-    model = inception_v3(pretrained=True)
-    model.fc = torch.nn.Identity()  # replace the classifier with identity to get features
-    model.eval()
-    model = model.to(device if torch.cuda.is_available() else "cpu")
-    net = FIDEmbeddingNet(model)
+    net = FIDEmbeddingNet(device=device)
     embeddings = net.get_embeddings(dataloader)
     return embeddings
 
@@ -186,53 +229,74 @@ def random_dataset(n=1000, d=10):
     return torch.randn(n, d)
 
 
+@register_distribution("normal")
+def normal_distribution():
+    return torch.distributions.Normal(0, 1)
+
+
+@register_distribution("normal")
+def normal_distribution():
+    return torch.distributions.Normal(0, 1)
+
+
 @register_dataset("toy_2d")
-def toy_mog_2D(n=1000, d=2):
-    """Generate samples from a 2D mixture of 4 Gaussians that look funky.
+def toy_2d(n=1000, d=2):
+    return toy_mog_2d().sample(n)
 
-    Args:
-        n (int): number of samples to generate
-        d (int): dimensionality of the samples, always 2. Changing it does nothing.
 
-    Returns:
-        tensor: samples of shape (num_samples, 2)
-    """
-    means = torch.tensor(
-        [
-            [0.0, 0.5],
-            [-3.0, -0.5],
-            [0.0, -1.0],
-            [-4.0, -3.0],
-        ]
-    )
-    covariances = torch.tensor(
-        [
-            [[1.0, 0.8], [0.8, 1.0]],
-            [[1.0, -0.5], [-0.5, 1.0]],
-            [[1.0, 0.0], [0.0, 1.0]],
-            [[0.5, 0.0], [0.0, 0.5]],
-        ]
-    )
-    weights = torch.tensor([0.2, 0.3, 0.3, 0.2])
+@register_distribution("toy_2d")
+def toy_mog_2d():
+    class Toy2D:
+        def __init__(self):
+            self.means = torch.tensor(
+                [
+                    [0.0, 0.5],
+                    [-3.0, -0.5],
+                    [0.0, -1.0],
+                    [-4.0, -3.0],
+                ]
+            )
+            self.covariances = torch.tensor(
+                [
+                    [[1.0, 0.8], [0.8, 1.0]],
+                    [[1.0, -0.5], [-0.5, 1.0]],
+                    [[1.0, 0.0], [0.0, 1.0]],
+                    [[0.5, 0.0], [0.0, 0.5]],
+                ]
+            )
+            self.weights = torch.tensor([0.2, 0.3, 0.3, 0.2])
 
-    # Create a list of 2D Gaussian distributions
-    gaussians = [
-        MultivariateNormal(mean, covariance) for mean, covariance in zip(means, covariances)
-    ]
+            # Create a list of 2D Gaussian distributions
+            self.gaussians = [
+                MultivariateNormal(mean, covariance)
+                for mean, covariance in zip(self.means, self.covariances)
+            ]
 
-    # Sample from the mixture
-    categorical = Categorical(weights)
-    sample_indices = categorical.sample([n])
-    samples = torch.stack([gaussians[i].sample() for i in sample_indices])
-    return samples
+        def sample(self, sample_shape):
+            if isinstance(sample_shape, int):
+                sample_shape = (sample_shape,)
+            # Sample from the mixture
+            categorical = Categorical(self.weights)
+            sample_indices = categorical.sample(sample_shape)
+            return torch.stack([self.gaussians[i].sample() for i in sample_indices])
+
+        def log_prob(self, input):
+            probs = torch.stack([g.log_prob(input).exp() for g in self.gaussians])
+            probs = probs.T * self.weights
+            return torch.sum(probs, dim=1).log()
+
+    return Toy2D()
 
 
 @register_dataset("cifar10_train")
-def cifar10_train(n=1000, d=10, save_path="data", device="cpu"):
+def cifar10_train(n=1000, d=2048, save_path="data", device="cpu"):
 
     assert d is None or d == 2048, "The dimensionality of the embeddings must be 2048"
 
     embeddings = load_cifar10(n, save_path=save_path, train=True, device=device)
+    # to cpu if necessary
+    if device == "cuda":
+        embeddings = embeddings.cpu()
 
     max_n = embeddings.shape[0]
 
@@ -246,7 +310,12 @@ def cifar10_test(n=1000, d=2048, save_path="data", device="cpu"):
 
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
 
+    assert d is None or d == 2048, "The dimensionality of the embeddings must be 2048"
+
     embeddings = load_cifar10(n, save_path=save_path, train=False, device=device)
+    # to cpu if necessary
+    if device == "cuda":
+        embeddings = embeddings.cpu()
 
     max_n = embeddings.shape[0]
 
