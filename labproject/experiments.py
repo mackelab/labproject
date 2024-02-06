@@ -101,16 +101,7 @@ class ScaleSampleSize(Experiment):
         return sample_sizes, final_distances, final_errors
 
     def plot_experiment(
-        self,
-        sample_sizes,
-        distances,
-        errors,
-        dataset_name,
-        ax=None,
-        color=None,
-        label=None,
-        linestyle="-",
-        **kwargs
+        self, sample_sizes, distances, errors, dataset_name, ax=None, label=None, **kwargs
     ):
         plot_scaling_metric_sample_size(
             sample_sizes,
@@ -119,9 +110,7 @@ class ScaleSampleSize(Experiment):
             self.metric_name,
             dataset_name,
             ax=ax,
-            color=color,
             label=label,
-            linestyle=linestyle,
             **kwargs
         )
 
