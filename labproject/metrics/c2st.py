@@ -10,10 +10,13 @@ from sklearn.model_selection import KFold, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
+from labproject.metrics.utils import register_metric
+
 
 # from sbi: https://github.com/sbi-dev/sbi/blob/main/sbi/utils/metrics.py
 
 
+@register_metric("c2st_nn")
 def c2st_nn(
     X: Tensor,
     Y: Tensor,
@@ -75,7 +78,7 @@ def c2st_nn(
     ndim = X.shape[-1]
     defaults = {
         "activation": activation,
-        "hidden_layer_sizes": (10 * ndim, 10 * ndim),
+        "hidden_layer_sizes": (min(10 * ndim, 100), min(10 * ndim, 100)),
         "max_iter": 1000,
         "solver": "adam",
         "early_stopping": True,
@@ -101,6 +104,7 @@ def c2st_nn(
     return value
 
 
+@register_metric("c2st_rf")
 def c2st_rf(
     X: Tensor,
     Y: Tensor,
@@ -179,6 +183,7 @@ def c2st_rf(
     return value
 
 
+@register_metric("c2st_knn")
 def c2st_knn(
     X: Tensor,
     Y: Tensor,

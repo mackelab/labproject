@@ -14,7 +14,8 @@ dependencies = [
     "torch",
     "OmegaConf",
     "torchvision",
-    "seaborn"
+    "seaborn",
+    "pandas"
 ]
 
 [project.optional-dependencies]

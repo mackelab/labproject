@@ -1,4 +1,5 @@
 import torch
+from labproject.metrics.utils import register_metric
 
 
 def sinkhorn_algorithm(
@@ -62,9 +63,10 @@ def sinkhorn_algorithm(
     return cost, transport
 
 
+@register_metric("wasserstein_sinkhorn")
 def sinkhorn_loss(
     x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 1000, p: int = 2
-):
+) -> torch.Tensor:
     loss, transport = sinkhorn_algorithm(x, y, epsilon, niter, p)
     return loss
 

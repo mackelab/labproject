@@ -3,9 +3,9 @@ site_name: Mackathon
 nav:
   - Home: index.md
   - API: api.md
-  - Notebooks: 
-    - Example Notebook: notebooks/example.ipynb
-    - FID notebook: notebooks/fid.ipynb
+  #- Notebooks:
+  #  - Example Notebook: notebooks/example.ipynb
+  #  - FID notebook: notebooks/fid.ipynb
 
 
 theme:
@@ -17,7 +17,7 @@ theme:
 
 plugins:
   - search
-  - mkdocs-jupyter
+  #- mkdocs-jupyter
   - include-markdown
   - mkdocstrings:
       watch:

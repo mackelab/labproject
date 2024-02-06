@@ -1,5 +1,10 @@
 import torch
-from labproject.metrics import sliced_wasserstein_distance, gaussian_kl_divergence
+from labproject.metrics import (
+    sliced_wasserstein_distance,
+    gaussian_kl_divergence,
+    c2st_nn,
+    compute_rbf_mmd,
+)
 from labproject.plotting import plot_scaling_metric_dimensionality, plot_scaling_metric_sample_size
 from labproject.metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
 import pickle
@@ -57,24 +62,67 @@ class ScaleDimSW(ScaleDim):
 
 class ScaleSampleSize(Experiment):
 
-    def __init__(self, metric_name, metric_fn, min_samples=2, max_samples=1000, step=100):
-        assert min_samples > 1, "min_samples must be greater than 1"
+    def __init__(
+        self, metric_name, metric_fn, min_samples=3, max_samples=2000, step=100, sample_sizes=None
+    ):
+        assert min_samples > 2, "min_samples must be greater than 2 to compute covariance for KL"
         self.metric_name = metric_name
         self.metric_fn = metric_fn
-        self.sample_sizes = list(range(min_samples, max_samples, step))
+        # TODO: add logarithmic scale or only keep pass in run experiment
+        if sample_sizes is not None:
+            self.sample_sizes = sample_sizes
+        else:
+            self.sample_sizes = list(range(min_samples, max_samples, step))
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2):
-        distances = []
-        for n in self.sample_sizes:
-            distances.append(self.metric_fn(dataset1[:n, :], dataset2[:n, :]))
-        return self.sample_sizes, distances
+    def run_experiment(self, dataset1, dataset2, nb_runs=5, sample_sizes=None):
+        """
+        Computes for each subset 5 different random subsets and averages performance across the subsets.
+        """
+        final_distances = []
+        final_errors = []
+        if sample_sizes is None:
+            sample_sizes = self.sample_sizes
+        for idx in range(nb_runs):
+            distances = []
+            for n in sample_sizes:
+                data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :]
+                data2 = dataset2[torch.randperm(dataset2.size(0))[:n], :]
+                distances.append(self.metric_fn(data1, data2))
+            final_distances.append(distances)
+        final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
+        final_errors = (
+            torch.tensor([torch.std(d) for d in final_distances])
+            if nb_runs > 1
+            else torch.zeros_like(torch.tensor(sample_sizes))
+        )
+        final_distances = torch.tensor([torch.mean(d) for d in final_distances])
+
+        return sample_sizes, final_distances, final_errors
 
     def plot_experiment(
-        self, sample_sizes, distances, dataset_name, ax=None, color=None, label=None
+        self,
+        sample_sizes,
+        distances,
+        errors,
+        dataset_name,
+        ax=None,
+        color=None,
+        label=None,
+        linestyle="-",
+        **kwargs
     ):
         plot_scaling_metric_sample_size(
-            sample_sizes, distances, self.metric_name, dataset_name, ax=ax, color=color, label=label
+            sample_sizes,
+            distances,
+            errors,
+            self.metric_name,
+            dataset_name,
+            ax=ax,
+            color=color,
+            label=label,
+            linestyle=linestyle,
+            **kwargs
         )
 
     def log_results(self, results, log_path):
@@ -86,13 +134,39 @@ class ScaleSampleSize(Experiment):
 
 
 class ScaleSampleSizeKL(ScaleSampleSize):
-    def __init__(self):
-        super().__init__("KL", gaussian_kl_divergence)
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "KL",
+            gaussian_kl_divergence,
+            min_samples=min_samples,
+            sample_sizes=sample_sizes,
+            **kwargs
+        )
 
 
 class ScaleSampleSizeSW(ScaleSampleSize):
-    def __init__(self):
-        super().__init__("Sliced Wasserstein", sliced_wasserstein_distance)
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "Sliced Wasserstein",
+            sliced_wasserstein_distance,
+            min_samples=min_samples,
+            sample_sizes=sample_sizes,
+            **kwargs
+        )
+
+
+class ScaleSampleSizeC2ST(ScaleSampleSize):
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "C2ST", c2st_nn, min_samples=min_samples, sample_sizes=sample_sizes, **kwargs
+        )
+
+
+class ScaleSampleSizeMMD(ScaleSampleSize):
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "MMD", compute_rbf_mmd, min_samples=min_samples, sample_sizes=sample_sizes, **kwargs
+        )
 
 
 class CIFAR10_FID_Train_Test(Experiment):
