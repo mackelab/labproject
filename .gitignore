@@ -153,3 +153,6 @@ secrets.py
 
 results/
 .vscode/settings.json
+docs/notebooks/sample_size_auguste-2.ipynb
+configs/conf_default.yaml
+configs/conf_default.yaml
