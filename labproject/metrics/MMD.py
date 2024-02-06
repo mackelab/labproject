@@ -67,12 +67,11 @@ def mmd_poly(X, Y, degree=2, gamma=1, coef0=0):
     return XX.mean() + YY.mean() - 2 * XY.mean()
 
 
-
-#a = np.arange(1, 10).reshape(3, 3)
-#b = [[7, 6, 5], [4, 3, 2], [1, 1, 8], [0, 2, 5]]
-#b = np.array(b)
-#print('a:', a)
-#print('b:', b)
-#print(mmd_linear(a, b))  # 6.0
-#print(mmd_rbf(a, b))  # 0.5822
-#print(mmd_poly(a, b))  # 2436.5
+# a = np.arange(1, 10).reshape(3, 3)
+# b = [[7, 6, 5], [4, 3, 2], [1, 1, 8], [0, 2, 5]]
+# b = np.array(b)
+# print('a:', a)
+# print('b:', b)
+# print(mmd_linear(a, b))  # 6.0
+# print(mmd_rbf(a, b))  # 0.5822
+# print(mmd_poly(a, b))  # 2436.5
