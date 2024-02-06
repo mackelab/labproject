@@ -1,5 +1,10 @@
 import matplotlib.pyplot as plt
 import os
+import seaborn as sns
+
+####
+# global plot params
+###
 
 # Load matplotlibrc file
 STYLE_PATH = os.path.abspath(
@@ -8,6 +13,21 @@ STYLE_PATH = os.path.abspath(
 plt.style.use(STYLE_PATH)
 
 PLOT_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), "plots"))
+
+# color items -- example usage in application2.ipynb
+
+
+def generate_palette(hex_color, n_colors=5):
+    palette = sns.light_palette(hex_color, n_colors=n_colors, as_cmap=False)
+    return palette
+
+
+color_dict = {"wasserstein": "#cc241d", "mmd": "#eebd35", "c2st": "#458588", "fid": "#8ec07c"}
+
+
+####
+# plotting functions
+###
 
 
 def cm2inch(cm, INCH=2.54):
