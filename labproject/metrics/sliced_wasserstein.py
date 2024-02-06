@@ -15,7 +15,8 @@ def sliced_wasserstein_distance(
     device: str = "cpu",
 ) -> Tensor:
     """
-    Sliced Wasserstein distance between encoded samples and distribution samples
+    Sliced Wasserstein distance between encoded samples and distribution samples.
+    Note that the SWD does not converge to the true Wasserstein distance, but rather it is a different proper distance metric.
 
     Args:
         encoded_samples (torch.Tensor): tensor of encoded training samples

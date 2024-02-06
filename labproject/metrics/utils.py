@@ -22,6 +22,10 @@ def register_metric(name: str) -> callable:
         def wrapper(*args, **kwargs):
             # Call the original function
             metric = func(*args, **kwargs)
+            
+            # Convert output to tensor
+            metric = torch.tensor(metric)
+            
             return metric
 
         METRICS[name] = wrapper
