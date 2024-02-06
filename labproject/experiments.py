@@ -79,6 +79,9 @@ class ScaleSampleSize(Experiment):
         """
         Computes for each subset 5 different random subsets and averages performance across the subsets.
         """
+        assert sample_sizes[-1] < dataset1.size(
+            0
+        ), "Sample size must be smaller than the dataset size."
         final_distances = []
         final_errors = []
         if sample_sizes is None:
