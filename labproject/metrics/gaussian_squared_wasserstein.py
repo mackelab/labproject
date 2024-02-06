@@ -1,8 +1,10 @@
 import torch
 from torch import Tensor
 import scipy
+from labproject.metrics.utils import register_metric
 
 
+@register_metric("wasserstein_gauss_squared")
 def gaussian_squared_w2_distance(real_samples: Tensor, fake_samples: Tensor) -> Tensor:
     r"""
     Compute the squared Wasserstein distance between Gaussian approximations of real and fake samples.

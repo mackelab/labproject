@@ -3,15 +3,17 @@
 
 import torch
 from torch import Tensor
+from labproject.metrics.utils import register_metric
 
 
+@register_metric("sliced_wasserstein")
 def sliced_wasserstein_distance(
     encoded_samples: Tensor,
     distribution_samples: Tensor,
     num_projections: int = 50,
     p: int = 2,
     device: str = "cpu",
-):
+) -> Tensor:
     """
     Sliced Wasserstein distance between encoded samples and distribution samples
 
