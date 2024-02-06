@@ -164,3 +164,6 @@ configs/conf_all_samplesize.yaml
 # Erdem
 docs/notebooks/sample_size_auguste-2.ipynb
 configs/conf_default.yaml
+
+configs/conf_default.yaml
+configs/conf_FIDinc.yaml
