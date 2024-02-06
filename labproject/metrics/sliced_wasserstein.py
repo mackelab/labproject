@@ -13,7 +13,7 @@ def sliced_wasserstein_distance(
     num_projections: int = 50,
     p: int = 2,
     device: str = "cpu",
-):
+) -> Tensor:
     """
     Sliced Wasserstein distance between encoded samples and distribution samples
 
