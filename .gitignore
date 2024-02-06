@@ -153,3 +153,9 @@ secrets.py
 
 results/
 .vscode/settings.json
+
+configs/conf_auguste.yaml
+configs/conf_samplesize.yaml
+labproject/run_auguste.py
+labproject/run_samplesize.py
+configs/conf_all_samplesize.yaml
