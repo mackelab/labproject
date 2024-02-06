@@ -25,4 +25,4 @@ def _convertsvg2pdf(c, fig):
 def _convertpdf2png(c, fig):
     pathlist = Path(f"{basepath}/{fig_names[fig]}/").glob("*.pdf")
     for path in pathlist:
-        c.run(f'inkscape {str(path)} --export-png={str(path)[:-4]}.png -b "white" --export-dpi=250')
+        c.run(f'inkscape {str(path)} --export-png={str(path)[:-4]}.png -b "white" --export-dpi=300')

@@ -68,7 +68,6 @@ class ScaleSampleSize(Experiment):
         assert min_samples > 2, "min_samples must be greater than 2 to compute covariance for KL"
         self.metric_name = metric_name
         self.metric_fn = metric_fn
-        # TODO: add logarithmic scale or only keep pass in run experiment
         if sample_sizes is not None:
             self.sample_sizes = sample_sizes
         else:
