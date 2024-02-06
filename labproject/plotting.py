@@ -18,8 +18,11 @@ PLOT_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file_
 # color items -- example usage in application2.ipynb
 
 
-def generate_palette(hex_color, n_colors=5):
-    palette = sns.light_palette(hex_color, n_colors=n_colors, as_cmap=False)
+def generate_palette(hex_color, n_colors=5, saturation="light"):
+    if saturation == "light":
+        palette = sns.light_palette(hex_color, n_colors=n_colors, as_cmap=False)
+    elif saturation == "dark":
+        palette = sns.dark_palette(hex_color, n_colors=n_colors, as_cmap=False)
     return palette
 
 
