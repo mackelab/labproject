@@ -1,8 +1,5 @@
 import numpy as np
 from sklearn import metrics
-import torch
-from torch.distributions import MultivariateNormal, Categorical
-import matplotlib.pyplot as plt
 import random
 
 
