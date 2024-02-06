@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
+import numpy as np
 
 ####
 # global plot params
@@ -17,8 +18,11 @@ PLOT_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file_
 # color items -- example usage in application2.ipynb
 
 
-def generate_palette(hex_color, n_colors=5):
-    palette = sns.light_palette(hex_color, n_colors=n_colors, as_cmap=False)
+def generate_palette(hex_color, n_colors=5, saturation="light"):
+    if saturation == "light":
+        palette = sns.light_palette(hex_color, n_colors=n_colors, as_cmap=False)
+    elif saturation == "dark":
+        palette = sns.dark_palette(hex_color, n_colors=n_colors, as_cmap=False)
     return palette
 
 
@@ -63,27 +67,28 @@ def plot_scaling_metric_dimensionality(
 def plot_scaling_metric_sample_size(
     sample_size,
     distances,
+    errors,
     metric_name,
     dataset_name,
     ax=None,
-    color=None,
     label=None,
-    linestyle="-",
     **kwargs,
 ):
     """Plot the behavior of a metric with number of samples."""
     if ax is None:
-        if color is not None:
-            plt.plot(
-                sample_size,
-                distances,
-                color=color,
-                label=metric_name if label is None else label,
-                linestyle=linestyle,
-                **kwargs,
-            )
-        else:
-            plt.plot(sample_size, distances, label=metric_name, linestyle=linestyle, **kwargs)
+        plt.plot(
+            sample_size,
+            distances,
+            label=metric_name if label is None else label,
+            **kwargs,
+        )
+        plt.fill_between(
+            sample_size,
+            distances - errors,
+            distances + errors,
+            alpha=0.2,
+            color="black" if kwargs.get("color") is None else kwargs.get("color"),
+        )
         plt.xlabel("samples")
         plt.ylabel(metric_name)
         plt.title(f"{metric_name} with increasing sample size for {dataset_name}")
@@ -95,18 +100,21 @@ def plot_scaling_metric_sample_size(
         )
         plt.close()
     else:
-        if color is not None:
-            ax.plot(
-                sample_size,
-                distances,
-                label=metric_name if label is None else label,
-                color=color,
-                linestyle=linestyle,
-                **kwargs,
-            )
-        else:
-            ax.plot(sample_size, distances, label=metric_name if label is None else label, **kwargs)
+        ax.plot(
+            sample_size,
+            distances,
+            label=metric_name if label is None else label,
+            **kwargs,
+        )
+        ax.fill_between(
+            sample_size,
+            distances - errors,
+            distances + errors,
+            alpha=0.2,
+            color="black" if kwargs.get("color") is None else kwargs.get("color"),
+        )
         ax.set_xlabel("samples")
-        ax.set_ylabel(metric_name, color=color)
-
+        ax.set_ylabel(
+            metric_name, color="black" if kwargs.get("color") is None else kwargs.get("color")
+        )
         return ax

@@ -1,7 +1,9 @@
 import torch
 from torch import Tensor
+from labproject.metrics.utils import register_metric
 
 
+@register_metric("gaussian_kl_divergence")
 def gaussian_kl_divergence(real_samples: Tensor, fake_samples: Tensor) -> Tensor:
     r"""
     Compute the KL divergence between Gaussian approximations of real and fake samples.
