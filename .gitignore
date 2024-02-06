@@ -154,8 +154,13 @@ secrets.py
 results/
 .vscode/settings.json
 
+# Auguste TODO delete later 
 configs/conf_auguste.yaml
 configs/conf_samplesize.yaml
 labproject/run_auguste.py
 labproject/run_samplesize.py
 configs/conf_all_samplesize.yaml
+
+# Erdem
+docs/notebooks/sample_size_auguste-2.ipynb
+configs/conf_default.yaml
