@@ -75,18 +75,36 @@ class ScaleSampleSize(Experiment):
             self.sample_sizes = list(range(min_samples, max_samples, step))
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2, sample_sizes=None):
-        distances = []
+    def run_experiment(self, dataset1, dataset2, nb_runs=5, sample_sizes=None):
+        """
+        Computes for each subset 5 different random subsets and averages performance across the subsets.
+        """
+        final_distances = []
+        final_errors = []
         if sample_sizes is None:
             sample_sizes = self.sample_sizes
-        for n in sample_sizes:
-            distances.append(self.metric_fn(dataset1[:n, :], dataset2[:n, :]))
-        return sample_sizes, distances
+        for idx in range(nb_runs):
+            distances = []
+            for n in sample_sizes:
+                data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :]
+                data2 = dataset2[torch.randperm(dataset2.size(0))[:n], :]
+                distances.append(self.metric_fn(data1, data2))
+            final_distances.append(distances)
+        final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
+        final_errors = (
+            torch.tensor([torch.std(d) for d in final_distances])
+            if nb_runs > 1
+            else torch.zeros_like(torch.tensor(sample_sizes))
+        )
+        final_distances = torch.tensor([torch.mean(d) for d in final_distances])
+
+        return sample_sizes, final_distances, final_errors
 
     def plot_experiment(
         self,
         sample_sizes,
         distances,
+        errors,
         dataset_name,
         ax=None,
         color=None,
@@ -97,6 +115,7 @@ class ScaleSampleSize(Experiment):
         plot_scaling_metric_sample_size(
             sample_sizes,
             distances,
+            errors,
             self.metric_name,
             dataset_name,
             ax=ax,

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
+import numpy as np
 
 ####
 # global plot params
@@ -63,6 +64,7 @@ def plot_scaling_metric_dimensionality(
 def plot_scaling_metric_sample_size(
     sample_size,
     distances,
+    errors,
     metric_name,
     dataset_name,
     ax=None,
@@ -77,6 +79,7 @@ def plot_scaling_metric_sample_size(
             label=metric_name if label is None else label,
             **kwargs,
         )
+        plt.fill_between(sample_size, distances - errors, distances + errors, alpha=0.2, **kwargs)
         plt.xlabel("samples")
         plt.ylabel(metric_name)
         plt.title(f"{metric_name} with increasing sample size for {dataset_name}")
@@ -94,6 +97,7 @@ def plot_scaling_metric_sample_size(
             label=metric_name if label is None else label,
             **kwargs,
         )
+        ax.fill_between(sample_size, distances - errors, distances + errors, alpha=0.2, **kwargs)
         ax.set_xlabel("samples")
         ax.set_ylabel(
             metric_name, color="black" if kwargs.get("color") is None else kwargs.get("color")
