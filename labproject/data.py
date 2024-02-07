@@ -527,9 +527,7 @@ def imagenet_validation_embedding(n, d=2048, device="cpu", save_path="data"):
 
 
 @register_dataset("imagenet_conditional_model")
-def imagenet_conditional_model(
-    n, d=2048, label: Optional[int] = None, device="cpu", save_path="data"
-):
+def imagenet_conditional_model(n, d=2048, label:Optional[int]=None, device="cpu", permute_if_no_label=True, save_path="data"):
     r"""Get the conditional model embeddings for ImageNet
 
     Args:
@@ -551,10 +549,9 @@ def imagenet_conditional_model(
     if label is not None:
         conditional_embeddings = conditional_embeddings[label]
     else:
-        conditional_embeddings = conditional_embeddings.flatten(0, 1)
-        conditional_embeddings = conditional_embeddings[
-            torch.randperm(conditional_embeddings.shape[0])
-        ]
+        conditional_embeddings = conditional_embeddings.flatten(0,1)
+        if permute_if_no_label:
+            conditional_embeddings = conditional_embeddings[torch.randperm(conditional_embeddings.shape[0])]
 
     max_n = conditional_embeddings.shape[0]
 
