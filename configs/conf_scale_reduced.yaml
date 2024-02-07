@@ -3,18 +3,18 @@ data: ["toy_2d" , "random", "random"]
 experiments: ["ScaleSampleSizeSW", "ScaleSampleSizeC2ST",
  "ScaleSampleSizeMMD"]
  
-experiments_dim: ["ScaleDimMMD", "ScaleDimMMD", "ScaleDimMMD"]
-dim_sizes: [5, 10, 100, 1000]
-sample_size: [5, 10, 100, 1000]
+experiments_dim: ["ScaleDimSW", "ScaleDimC2ST", "ScaleDimMMD"]
+dim_sizes: [5, 10, 50, 100, 500, 1000]
+sample_size: [50, 100, 200, 500, 1000, 2000, 3000, 4000]
 
 n:  [10000, 10000, 10000] #[10000, 10000, 10000]
 d: [2, 10, 1000]
 
 
-mmd_bandwidth: [5, 10, 40]
+mmd_bandwidth: [1, 5, 10]
 #mmd_bandwidth: [1, 10, 50]
 augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
 
 seed: 0
-runs: 2
-
+runs: 5
+runs_dim: 1
