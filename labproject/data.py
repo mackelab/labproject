@@ -23,11 +23,12 @@ STORAGEBOX_URL = os.getenv("HETZNER_STORAGEBOX_URL")
 HETZNER_STORAGEBOX_USERNAME = os.getenv("HETZNER_STORAGEBOX_USERNAME")
 HETZNER_STORAGEBOX_PASSWORD = os.getenv("HETZNER_STORAGEBOX_PASSWORD")
 
-IMAGENET_UNCONDITIONAL_MODEL_EMBEDDING = "https://drive.google.com/uc?id=1xsGlNig7pCQuMpsvN86hgTGLEDGi6fVD"
+IMAGENET_UNCONDITIONAL_MODEL_EMBEDDING = (
+    "https://drive.google.com/uc?id=1xsGlNig7pCQuMpsvN86hgTGLEDGi6fVD"
+)
 IMAGENET_CONDITIONAL_MODEL = "https://drive.google.com/uc?id=1FBVFiFcWnVs4i_LK4lAUemx83D7Hb_tU"
 IMAGENET_TEST_EMBEDDING = "https://drive.google.com/uc?id=12B5Nkjr611WhXUafv08BciW7nsZ20Dfc"
 IMAGENET_VALIDATION_EMBEDDING = "https://drive.google.com/uc?id=1Chc2ygs-Akw0Hlq-Nx7ykF2fp3SqV_aM"
-
 
 
 ## Hetzner Storage Box API functions ----
@@ -280,16 +281,14 @@ def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
         vars = torch.diag(vars)
 
     samples = torch.distributions.MultivariateNormal(means, vars).sample((n,))
-    print(f"Shape of samples: {samples.shape}")
     if distort == "shift_all":
-        shift = 0.1
+        shift = 1
         samples = samples + shift
     elif distort == "shift_one":
-        # randomly choose one index among dims
-        # idx = torch.randint(dims, size=(1,))[0]
         idx = 0
         shift = torch.zeros(n) + 1
         samples[:, idx] = samples[:, idx] + shift
+    print(f"First 5 rows of dataset distorted: {samples[:5, :5]}")
     return samples
 
 
@@ -458,14 +457,20 @@ def imagenet_unconditional_model_embedding(n, d=2048, device="cpu", save_path="d
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
     if not os.path.exists("imagenet_unconditional_model_embedding.pt"):
         import gdown
-        gdown.download(IMAGENET_UNCONDITIONAL_MODEL_EMBEDDING, "imagenet_unconditional_model_embedding.pt", quiet=False)
+
+        gdown.download(
+            IMAGENET_UNCONDITIONAL_MODEL_EMBEDDING,
+            "imagenet_unconditional_model_embedding.pt",
+            quiet=False,
+        )
     unconditional_embeddigns = torch.load("imagenet_unconditional_model_embedding.pt")
 
     max_n = unconditional_embeddigns.shape[0]
-    
+
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
-    
+
     return unconditional_embeddigns[:n]
+
 
 @register_dataset("imagenet_test_embedding")
 def imagenet_test_embedding(n, d=2048, device="cpu", save_path="data"):
@@ -482,15 +487,15 @@ def imagenet_test_embedding(n, d=2048, device="cpu", save_path="data"):
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
     if not os.path.exists("imagenet_test_embedding.pt"):
         import gdown
+
         gdown.download(IMAGENET_TEST_EMBEDDING, "imagenet_test_embedding.pt", quiet=False)
     test_embeddigns = torch.load("imagenet_test_embedding.pt")
 
     max_n = test_embeddigns.shape[0]
-    
+
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
-    
+
     return test_embeddigns[:n]
-    
 
 
 @register_dataset("imagenet_validation_embedding")
@@ -508,17 +513,23 @@ def imagenet_validation_embedding(n, d=2048, device="cpu", save_path="data"):
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
     if not os.path.exists("imagenet_validation_embedding.pt"):
         import gdown
-        gdown.download(IMAGENET_VALIDATION_EMBEDDING, "imagenet_validation_embedding.pt", quiet=False)
+
+        gdown.download(
+            IMAGENET_VALIDATION_EMBEDDING, "imagenet_validation_embedding.pt", quiet=False
+        )
     validation_embeddigns = torch.load("imagenet_validation_embedding.pt")
 
     max_n = validation_embeddigns.shape[0]
-    
+
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
-    
+
     return validation_embeddigns[:n]
 
+
 @register_dataset("imagenet_conditional_model")
-def imagenet_conditional_model(n, d=2048, label:Optional[int]=None, device="cpu", save_path="data"):
+def imagenet_conditional_model(
+    n, d=2048, label: Optional[int] = None, device="cpu", save_path="data"
+):
     r"""Get the conditional model embeddings for ImageNet
 
     Args:
@@ -533,6 +544,7 @@ def imagenet_conditional_model(n, d=2048, label:Optional[int]=None, device="cpu"
     assert d == 2048, "The dimensionality of the embeddings must be 2048"
     if not os.path.exists("imagenet_conditional_model.pt"):
         import gdown
+
         gdown.download(IMAGENET_CONDITIONAL_MODEL, "imagenet_conditional_model.pt", quiet=False)
     conditional_embeddings = torch.load("imagenet_conditional_model.pt")
 
@@ -540,10 +552,12 @@ def imagenet_conditional_model(n, d=2048, label:Optional[int]=None, device="cpu"
         conditional_embeddings = conditional_embeddings[label]
     else:
         conditional_embeddings = conditional_embeddings.flatten(0, 1)
-        conditional_embeddings = conditional_embeddings[torch.randperm(conditional_embeddings.shape[0])]
+        conditional_embeddings = conditional_embeddings[
+            torch.randperm(conditional_embeddings.shape[0])
+        ]
 
     max_n = conditional_embeddings.shape[0]
-    
+
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
-    
+
     return conditional_embeddings[:n]
