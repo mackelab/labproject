@@ -158,29 +158,30 @@ def place_boxplot(
     ax,
     x,
     y,
-    box_face_color="#77b5d9",
-    box_edge_color="#77b5d9",
-    box_lw=0.25,
-    box_alpha=1.0,
-    box_zorder=0,
-    whisker_color="#77b5d9",
+    body_face_color="#8189c9",
+    body_edge_color="k",
+    body_lw=0.25,
+    body_alpha=1.0,
+    body_zorder=0,
+    whisker_color="k",
+    whisker_alpha=1.0,
     whisker_lw=1,
     whisker_zorder=1,
-    cap_color="#000000",
+    cap_color="k",
     cap_lw=0.25,
     cap_zorder=1,
-    median_color="#ffffff",
+    median_color="k",
     median_alpha=1.0,
-    median_lw=2,
-    median_bar_length=0.75,
-    median_zorder=2,
+    median_lw=1.5,
+    median_bar_length=1.0,
+    median_zorder=10,
     width=0.5,
-    scatter_face_color="#000000",
-    scatter_edge_color="#000000",
-    scatter_radius=2,
+    scatter_face_color="k",
+    scatter_edge_color="none",
+    scatter_radius=5,
     scatter_lw=0.25,
-    scatter_alpha=1,
-    scatter_width=0.25,
+    scatter_alpha=0.35,
+    scatter_width=0.5,
     scatter=True,
     scatter_zorder=3,
     fill_box=True,
@@ -209,10 +210,10 @@ def place_boxplot(
 
     # polish the body
     b = parts["boxes"][0]
-    b.set_color(box_edge_color)
-    b.set_alpha(box_alpha)
-    b.set_linewidth(box_lw)
-    b.set_zorder(box_zorder)
+    b.set_color(body_edge_color)
+    b.set_alpha(body_alpha)
+    b.set_linewidth(body_lw)
+    b.set_zorder(body_zorder)
     if fill_box:
         if vert:
             x0, x1 = b.get_xdata()[:2]
@@ -221,8 +222,8 @@ def place_boxplot(
                 [x0, y0],
                 x1 - x0,
                 y1 - y0,
-                facecolor=box_face_color,
-                alpha=box_alpha,
+                facecolor=body_face_color,
+                alpha=body_alpha,
                 edgecolor="none",
             )
             ax.add_patch(r)
@@ -233,8 +234,8 @@ def place_boxplot(
                 [x0, y0],
                 x1 - x0,
                 y1 - y0,
-                facecolor=box_face_color,
-                alpha=box_alpha,
+                facecolor=body_face_color,
+                alpha=body_alpha,
                 edgecolor="none",
             )
             ax.add_patch(r)
@@ -242,6 +243,7 @@ def place_boxplot(
     # polish the whiskers
     for w in parts["whiskers"]:
         w.set_color(whisker_color)
+        w.set_alpha(whisker_alpha)
         w.set_linewidth(whisker_lw)
         w.set_zorder(whisker_zorder)
 
@@ -311,32 +313,119 @@ def place_boxplot(
             )
 
 
+def tiled_ticks(x0, x1, n_major_ticks, n_minor_ticks, offset):
+    X = (
+        np.tile(
+            np.linspace(
+                x0 - offset,
+                x0 + offset,
+                n_minor_ticks,
+            ),
+            n_major_ticks,
+        ).reshape(n_major_ticks, n_minor_ticks)
+        + np.linspace(x0, x1, n_major_ticks)[:, None]
+    )
+    return X
+
+
+def find_min_max_recursive(z, zmin=float("inf"), zmax=float("-inf")):
+    if isinstance(z, (int, float)):
+        return np.nanmin([z, zmin]), np.nanmax([z, zmax])
+    if isinstance(z, np.ndarray):
+        if not np.any(z):
+            return zmin, zmax
+        if z.dtype != np.dtype("O"):
+            _zmin, _zmax = np.nanmin(z), np.nanmax(z)
+            zmin = np.nanmin([zmin, _zmin])
+            zmax = np.nanmax([zmax, _zmax])
+            return zmin, zmax
+        else:
+            return find_min_max_recursive(z.tolist(), zmin, zmax)
+    if isinstance(z, (list, tuple)):
+        if not z:
+            return zmin, zmax
+        for item in z:
+            _zmin, _zmax = find_min_max_recursive(item, zmin, zmax)
+            zmin = np.nanmin([zmin, _zmin])
+            zmax = np.nanmax([zmax, _zmax])
+        return zmin, zmax
+    if isinstance(z, dict):
+        if not z:
+            return zmin, zmax
+        for value in z.values():
+            _zmin, _zmax = find_min_max_recursive(value, zmin, zmax)
+            zmin = np.nanmin([zmin, _zmin])
+            zmax = np.nanmax([zmax, _zmax])
+        return zmin, zmax
+    else:
+        raise ValueError(f"{z}")
+
+
+def get_lims(z, offset, min=None, max=None):
+    zmin, zmax = find_min_max_recursive(z)
+
+    if np.isinf(zmin) or np.isinf(zmax):
+        return -1, 1
+
+    _range = np.abs(zmax - zmin)
+    zmin -= _range * offset
+    zmax += _range * offset
+
+    if min is not None:
+        zmin = np.min((min, zmin))
+    if max is not None:
+        zmax = np.max((max, zmax))
+    return zmin, zmax
+
+
+def rm_spines(
+    ax,
+    spines=("top", "right", "bottom", "left"),
+    visible=False,
+    rm_xticks=True,
+    rm_yticks=True,
+):
+    for spine in spines:
+        ax.spines[spine].set_visible(visible)
+    if ("top" in spines or "bottom" in spines) and rm_xticks:
+        ax.xaxis.set_ticklabels([])
+        ax.xaxis.set_ticks_position("none")
+    if ("left" in spines or "right" in spines) and rm_yticks:
+        ax.yaxis.set_ticklabels([])
+        ax.yaxis.set_ticks_position("none")
+    return ax
+
+
 def place_violin(
     ax,
     x,
     y,
-    violin_face_color="#77b5d9",
-    violin_edge_color="k",
-    violin_lw=0.25,
-    violin_alpha=1.0,
-    whisker_color="#77b5d9",
+    body_face_color="#8189c9",
+    body_edge_color="k",
+    body_lw=0.25,
+    body_alpha=1.0,
+    body_zorder=0,
+    whisker_color="k",
+    whisker_alpha=1.0,
     whisker_lw=1,
     whisker_zorder=1,
-    cap_color="none",
+    cap_color="k",
     cap_lw=0.25,
     cap_zorder=1,
-    median_color="#ffffff",
-    median_lw=2,
-    median_bar_length=0.75,
-    median_zorder=2,
+    median_color="k",
+    median_alpha=1.0,
+    median_lw=1.5,
+    median_bar_length=1.0,
+    median_zorder=10,
     width=0.5,
-    scatter_face_color="#000000",
-    scatter_edge_color="#000000",
-    scatter_radius=2,
+    scatter_face_color="k",
+    scatter_edge_color="none",
+    scatter_radius=5,
     scatter_lw=0.25,
-    scatter_alpha=1,
-    scatter_width=0.25,
+    scatter_alpha=0.35,
+    scatter_width=0.5,
     scatter=True,
+    scatter_zorder=3,
     showextrema=True,
     showmedians=True,
     showmeans=False,
@@ -350,6 +439,8 @@ def place_violin(
         for (x, y) in zip(X, Y):
             place_violin(ax, x, y)
     """
+    if not np.any(y):
+        return
     parts = ax.violinplot(
         y,
         positions=[x],
@@ -361,15 +452,16 @@ def place_violin(
     )
     # Color the bodies.
     b = parts["bodies"][0]
-    b.set_facecolor(violin_face_color)
-    b.set_edgecolor(violin_edge_color)
-    b.set_linewidth(violin_lw)
-    b.set_alpha(violin_alpha)
-    b.set_zorder(0)
+    b.set_facecolor(body_face_color)
+    b.set_edgecolor(body_edge_color)
+    b.set_linewidth(body_lw)
+    b.set_alpha(body_alpha)
+    b.set_zorder(body_zorder)
 
     # Color the lines.
     if showextrema:
         parts["cbars"].set_color(whisker_color)
+        parts["cbars"].set_alpha(whisker_alpha)
         parts["cbars"].set_linewidth(whisker_lw)
         parts["cbars"].set_zorder(whisker_zorder)
         parts["cmaxes"].set_color(cap_color)
@@ -382,6 +474,7 @@ def place_violin(
     if showmeans:
         parts["cmeans"].set_color(median_color)
         parts["cmeans"].set_linewidth(median_lw)
+        parts["cmeans"].set_alpha(median_alpha)
         parts["cmeans"].set_zorder(median_zorder)
         if median_bar_length is not None:
             if vert:
@@ -405,8 +498,9 @@ def place_violin(
                     ]
                 )
 
-    if "cmedians" in parts:
+    if showmedians:
         parts["cmedians"].set_color(median_color)
+        parts["cmedians"].set_alpha(median_alpha)
         parts["cmedians"].set_linewidth(median_lw)
         parts["cmedians"].set_zorder(median_zorder)
         if median_bar_length is not None:
@@ -445,8 +539,8 @@ def place_violin(
                 edgecolor=scatter_edge_color,
                 s=scatter_radius,
                 linewidth=scatter_lw,
-                zorder=5,
                 alpha=scatter_alpha,
+                zorder=scatter_zorder,
             )
         else:
             ax.scatter(
