@@ -34,7 +34,7 @@ class ScaleDim(Experiment):
             self.dim_sizes = list(range(min_dim, max_dim, step))
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2, dataset_size, nb_runs=5, dim_sizes=None):
+    def run_experiment(self, dataset1, dataset2, dataset_size, nb_runs=5, dim_sizes=None, **kwargs):
         final_distances = []
         final_errors = []
         n = dataset_size
@@ -46,7 +46,7 @@ class ScaleDim(Experiment):
                 # 3000 x 100
                 data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :d]
                 data2 = dataset2[torch.randperm(dataset1.size(0))[:n], :d]
-                distances.append(self.metric_fn(data1, data2))
+                distances.append(self.metric_fn(data1, data2, **kwargs))
             final_distances.append(distances)
         final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
         final_errors = (
