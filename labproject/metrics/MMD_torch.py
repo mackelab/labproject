@@ -28,6 +28,16 @@ def compute_rbf_mmd(x, y, bandwidth=1.0):
     return mmd
 
 
+@register_metric("mmd_rbf_auto")
+def compute_rbf_mmd_auto(x, y, bandwidth=1.0):
+    dim = x.shape[1]
+    x_kernel = rbf_kernel(x, x, dim * bandwidth)
+    y_kernel = rbf_kernel(y, y, dim * bandwidth)
+    xy_kernel = rbf_kernel(x, y, dim * bandwidth)
+    mmd = torch.mean(x_kernel) + torch.mean(y_kernel) - 2 * torch.mean(xy_kernel)
+    return mmd
+
+
 @register_metric("mmd_polynomial")
 def compute_polynomial_mmd(x, y, degree=2, bias=0):
     x_kernel = polynomial_kernel(x, x, degree, bias)
