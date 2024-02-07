@@ -48,34 +48,45 @@ def gaussian_squared_w2_distance(real_samples: Tensor, fake_samples: Tensor, rea
     # check input (n,d only)
     assert len(real_samples.size()) == 2, "Real samples must be 2-dimensional, (n,d)"
     assert len(fake_samples.size()) == 2, "Fake samples must be 2-dimensional, (n,d)"
-
-    # calculate mean and covariance of real and fake samples
-    if real_mu is None:
+    
+    if real_samples.shape[-1] == 1:
         mu_real = real_samples.mean(dim=0)
+        var_real = real_samples.var(dim=0)
+        
+        mu_fake = fake_samples.mean(dim=0)
+        var_fake = fake_samples.var(dim=0)
+        
+        w2_squared_dist = (mu_real - mu_fake)**2 + (var_real + var_fake - 2 * (var_real * var_fake).sqrt())
+        
+        return w2_squared_dist
     else:
-        mu_real = real_mu
-    if real_cov is None:
-        cov_real = torch.cov(real_samples.t())
-    else:
-        cov_real = real_cov
+        # calculate mean and covariance of real and fake samples
+        if real_mu is None:
+            mu_real = real_samples.mean(dim=0)
+        else:
+            mu_real = real_mu
+        if real_cov is None:
+            cov_real = torch.cov(real_samples.t())
+        else:
+            cov_real = real_cov
 
-    mu_fake = fake_samples.mean(dim=0)
-    cov_fake = torch.cov(fake_samples.t())
+        mu_fake = fake_samples.mean(dim=0)
+        cov_fake = torch.cov(fake_samples.t())
 
-    # ensure the covariance matrices are invertible
-    eps = 1e-6
-    cov_real += torch.eye(cov_real.size(0)) * eps
-    cov_fake += torch.eye(cov_fake.size(0)) * eps
+        # ensure the covariance matrices are invertible
+        eps = 1e-6
+        cov_real += torch.eye(cov_real.size(0)) * eps
+        cov_fake += torch.eye(cov_fake.size(0)) * eps
 
-    # compute KL divergence
-    mean_dist = torch.norm(mu_real - mu_fake, p=2)
-    cov_sqrt = scipy.linalg.sqrtm((cov_real @ cov_fake).numpy())
-    # print(cov_sqrt.real)
-    cov_sqrt = torch.from_numpy(cov_sqrt.real)
-    cov_dist = torch.trace(cov_real + cov_fake - 2 * cov_sqrt)
-    w2_squared_dist = mean_dist**2 + cov_dist
+        # compute KL divergence
+        mean_dist = torch.norm(mu_real - mu_fake, p=2)
+        cov_sqrt = scipy.linalg.sqrtm((cov_real @ cov_fake).numpy())
+        # print(cov_sqrt.real)
+        cov_sqrt = torch.from_numpy(cov_sqrt.real)
+        cov_dist = torch.trace(cov_real + cov_fake - 2 * cov_sqrt)
+        w2_squared_dist = mean_dist**2 + cov_dist
 
-    return w2_squared_dist
+        return w2_squared_dist
 
 
 if __name__ == "__main__":
