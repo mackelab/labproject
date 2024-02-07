@@ -1,0 +1,11 @@
+exp_log_name: "scaling_dims" # optional but recommended
+data: ["multivariate_normal"]
+experiments: ["ScaleDimSW", "ScaleDimMMD"]
+n: [3000]
+d: [100]
+distort: ["shift_one", "shift_all"]
+dim_sizes: [5, 10, 15, 20, 25, 30, 40, 60, 80, 100]
+
+seed: 1404
+runs: 5
+
