@@ -24,7 +24,8 @@ def register_metric(name: str) -> callable:
             metric = func(*args, **kwargs)
 
             # Convert output to tensor
-            metric = torch.tensor(metric)
+            if not isinstance(metric, torch.Tensor):
+                metric = torch.tensor(metric)
 
             return metric
 
