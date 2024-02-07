@@ -277,7 +277,8 @@ def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
         samples = samples + shift
     elif distort == "shift_one":
         # randomly choose one index among dims
-        idx = torch.randint(dims, size=(1,))[0]
+        # idx = torch.randint(dims, size=(1,))[0]
+        idx = 0
         shift = torch.zeros(n) + 1
         samples[:, idx] = samples[:, idx] + shift
     return samples
