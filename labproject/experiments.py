@@ -34,20 +34,18 @@ class ScaleDim(Experiment):
             self.dim_sizes = list(range(min_dim, max_dim, step))
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2, nb_runs=5, dim_sizes=None):
-        """distances = []
-        for d in self.dimensionality:
-            distances.append(self.metric_fn(dataset1[:, :d], dataset2[:, :d]))
-        return self.dimensionality, distances"""
+    def run_experiment(self, dataset1, dataset2, dataset_size, nb_runs=5, dim_sizes=None):
         final_distances = []
         final_errors = []
+        n = dataset_size
         if dim_sizes is None:
             dim_sizes = self.dim_sizes
         for idx in range(nb_runs):
             distances = []
-            for n in dim_sizes:
-                data1 = dataset1[:, :n]
-                data2 = dataset2[:, :n]
+            for d in dim_sizes:
+                # 3000 x 100
+                data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :d]
+                data2 = dataset2[torch.randperm(dataset1.size(0))[:n], :d]
                 distances.append(self.metric_fn(data1, data2))
             final_distances.append(distances)
         final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
@@ -57,7 +55,7 @@ class ScaleDim(Experiment):
             else torch.zeros_like(torch.tensor(dim_sizes))
         )
         final_distances = torch.tensor([torch.mean(d) for d in final_distances])
-
+        print(f"Final errors: {final_errors}")
         return dim_sizes, final_distances, final_errors
 
     def plot_experiment(
@@ -70,7 +68,7 @@ class ScaleDim(Experiment):
         color=None,
         label=None,
         linestyle="-",
-        **kwargs
+        **kwargs,
     ):
 
         plot_scaling_metric_dimensionality(
@@ -83,7 +81,7 @@ class ScaleDim(Experiment):
             color=color,
             label=label,
             linestyle=linestyle,
-            **kwargs
+            **kwargs,
         )
 
     def log_results(self, results, log_path):
@@ -169,7 +167,7 @@ class ScaleSampleSize(Experiment):
         color=None,
         label=None,
         linestyle="-",
-        **kwargs
+        **kwargs,
     ):
         plot_scaling_metric_sample_size(
             sample_sizes,
@@ -181,7 +179,7 @@ class ScaleSampleSize(Experiment):
             color=color,
             label=label,
             linestyle=linestyle,
-            **kwargs
+            **kwargs,
         )
 
     def log_results(self, results, log_path):
@@ -199,7 +197,7 @@ class ScaleSampleSizeKL(ScaleSampleSize):
             gaussian_kl_divergence,
             min_samples=min_samples,
             sample_sizes=sample_sizes,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -210,7 +208,7 @@ class ScaleSampleSizeSW(ScaleSampleSize):
             sliced_wasserstein_distance,
             min_samples=min_samples,
             sample_sizes=sample_sizes,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -235,7 +233,7 @@ class ScaleSampleSizeFID(ScaleSampleSize):
             gaussian_squared_w2_distance,
             min_samples=min_samples,
             sample_sizes=sample_sizes,
-            **kwargs
+            **kwargs,
         )
 
 

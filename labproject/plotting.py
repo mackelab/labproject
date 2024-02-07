@@ -43,25 +43,58 @@ def cm2inch(cm, INCH=2.54):
 
 
 def plot_scaling_metric_dimensionality(
-    dimensionality, distances, metric_name, dataset_name, ax=None
+    dim_sizes,
+    distances,
+    errors,
+    metric_name,
+    dataset_name,
+    ax=None,
+    label=None,
+    **kwargs,
 ):
     """Plot the scaling of a metric with increasing dimensionality."""
     if ax is None:
-        plt.plot(dimensionality, distances, label=metric_name)
-        plt.xlabel("Dimensionality")
+        plt.plot(
+            dim_sizes,
+            distances,
+            label=metric_name if label is None else label,
+            **kwargs,
+        )
+        plt.fill_between(
+            dim_sizes,
+            distances - errors,
+            distances + errors,
+            alpha=0.2,
+            color="black" if kwargs.get("color") is None else kwargs.get("color"),
+        )
+        plt.xlabel("Dimension")
         plt.ylabel(metric_name)
-        plt.title(f"{metric_name} with increasing dimensionality for {dataset_name}")
+        plt.title(f"{metric_name} with increasing dimensionality size for {dataset_name}")
         plt.savefig(
             os.path.join(
                 PLOT_PATH,
-                f"{metric_name.lower().replace(' ', '_')}_dimensionality_{dataset_name.lower().replace(' ', '_')}.png",
+                f"{metric_name.lower().replace(' ', '_')}_dimensionality_size_{dataset_name.lower().replace(' ', '_')}.png",
             )
         )
         plt.close()
     else:
-        ax.plot(dimensionality, distances, label=metric_name)
-        ax.set_xlabel("Dimensionality")
-
+        ax.plot(
+            dim_sizes,
+            distances,
+            label=metric_name if label is None else label,
+            **kwargs,
+        )
+        ax.fill_between(
+            dim_sizes,
+            distances - errors,
+            distances + errors,
+            alpha=0.2,
+            color="black" if kwargs.get("color") is None else kwargs.get("color"),
+        )
+        ax.set_xlabel("samples")
+        ax.set_ylabel(
+            metric_name, color="black" if kwargs.get("color") is None else kwargs.get("color")
+        )
         return ax
 
 
