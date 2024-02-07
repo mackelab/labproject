@@ -255,14 +255,32 @@ def normal_distribution():
 
 
 @register_dataset("multivariate_normal")
-def multivariate_normal(means=None, vars=None, dims=100):
+def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
     if means is None:
         means = torch.zeros(dims)
+    else:
+        assert (
+            len(means) == dims
+        ), "The length of the means vector must be equal to the number of dimensions"
     if vars is None:
         vars = torch.eye(dims)
     else:
+        assert (
+            len(vars) == dims
+        ), "The length of the vars vector must be equal to the number of dimensions"
         vars = torch.diag(vars)
-    return torch.distributions.MultivariateNormal(means, vars)
+
+    samples = torch.distributions.MultivariateNormal(means, vars).sample((n,))
+    print(f"Shape of samples: {samples.shape}")
+    if distort == "shift_all":
+        shift = 0.1
+        samples = samples + shift
+    elif distort == "shift_one":
+        # randomly choose one index among dims
+        idx = torch.randint(dims, size=(1,))[0]
+        shift = torch.zeros(n) + 1
+        samples[:, idx] = samples[:, idx] + shift
+    return samples
 
 
 @register_dataset("toy_2d")
