@@ -49,7 +49,7 @@ def get_cfg() -> OmegaConf:
     return config
 
 
-def get_log_path(cfg):
+def get_log_path(cfg, tag="", timestamp=True):
     """
     Get the log path for the current experiment run.
     This log path is then used to save the numerical results of the experiment.
@@ -63,6 +63,18 @@ def get_log_path(cfg):
     else:
         exp_log_name = cfg.exp_log_name
         # add datetime to the name
-        exp_log_name = exp_log_name + "_" + now.strftime("%Y-%m-%d_%H-%M-%S")
+        add_date = now.strftime("%Y-%m-%d_%H-%M-%S") if timestamp else ""
+        exp_log_name = exp_log_name + tag + "_" + add_date
     log_path = os.path.join(f"results/{cfg.running_user}/{exp_log_name}.pkl")
+    return log_path
+
+
+def load_experiments(cfg, tag="", now=""):
+    """
+    load the experiments to run
+    """
+    exp_log_name = cfg.exp_log_name
+    # add datetime to the name
+    exp_log_name = exp_log_name + tag + "_" + now
+    log_path = os.path.join(f"results/{cfg.running_user}/{exp_log_name}")
     return log_path

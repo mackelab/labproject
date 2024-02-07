@@ -132,7 +132,7 @@ class ScaleSampleSize(Experiment):
             self.sample_sizes = list(range(min_samples, max_samples, step))
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2, nb_runs=5, sample_sizes=None):
+    def run_experiment(self, dataset1, dataset2, nb_runs=5, sample_sizes=None, **kwargs):
         """
         Computes for each subset 5 different random subsets and averages performance across the subsets.
         """
@@ -145,7 +145,7 @@ class ScaleSampleSize(Experiment):
             for n in sample_sizes:
                 data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :]
                 data2 = dataset2[torch.randperm(dataset2.size(0))[:n], :]
-                distances.append(self.metric_fn(data1, data2))
+                distances.append(self.metric_fn(data1, data2, **kwargs))
             final_distances.append(distances)
         final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
         final_errors = (
