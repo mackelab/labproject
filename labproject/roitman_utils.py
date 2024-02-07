@@ -29,10 +29,10 @@ def filter_roitman_data(
     """
 
     # extract values
-    #rt = df[(df["animal"] == animal) & (df["coherence"] == coherence)]["rt"].values / 1000
+    rt = df[(df["animal"] == animal) & (df["coherence"] == coherence)]["rt"].values / 1000
     rt = df[(df["coherence"] == coherence)]["rt"].values / 1000
 
-    #decision = df[(df["animal"] == animal) & (df["coherence"] == coherence)]["decision"].values
+    decision = df[(df["animal"] == animal) & (df["coherence"] == coherence)]["decision"].values
     decision = df[ (df["coherence"] == coherence)]["decision"].values
 
     if n_trial == "all":
