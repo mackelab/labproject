@@ -1,0 +1,23 @@
+exp_log_name: "500_sample_size_dimensionality" # optional but recommended
+data: ["toy_2d" , "random", "random"]
+experiments: ["ScaleSampleSizeSW", "ScaleSampleSizeC2ST",
+ "ScaleSampleSizeMMD"]
+ 
+experiments_dim: ["ScaleDimSW", "ScaleDimC2ST", "ScaleDimMMD"]
+dim_sizes: [5, 10, 50, 100, 500, 1000]
+sample_size: [8, 10, 20, 50, 80] #100, 200, 500, 1000, 2000, 3000, 4000]
+
+n:  [500, 500, 500] #[10000, 10000, 10000]
+
+#n:  [10000, 10000, 10000] #[10000, 10000, 10000]
+d: [2, 10, 1000]
+
+
+mmd_bandwidth: [1, 5, 10]
+#mmd_bandwidth: [1, 10, 50]
+augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
+#augmentation: ['gauss', 'mean_shift', 'mean_shift',]
+
+seed: 0
+runs: 5
+runs_dim: 1
