@@ -8,6 +8,7 @@ from labproject.metrics import (
 from labproject.plotting import plot_scaling_metric_dimensionality, plot_scaling_metric_sample_size
 from labproject.metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
 import pickle
+import math
 
 
 class Experiment:
@@ -55,7 +56,6 @@ class ScaleDim(Experiment):
             else torch.zeros_like(torch.tensor(dim_sizes))
         )
         final_distances = torch.tensor([torch.mean(d) for d in final_distances])
-        print(f"Final errors: {final_errors}")
         return dim_sizes, final_distances, final_errors
 
     def plot_experiment(
