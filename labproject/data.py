@@ -266,6 +266,7 @@ def normal_distribution():
 
 @register_dataset("multivariate_normal")
 def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
+
     if means is None:
         means = torch.zeros(dims)
     else:
@@ -273,12 +274,18 @@ def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
             len(means) == dims
         ), "The length of the means vector must be equal to the number of dimensions"
     if vars is None:
-        vars = torch.eye(dims)
+        if distort == "increase_var":
+            vars = torch.eye(dims) * 1.1
+        else:
+            vars = torch.eye(dims)
     else:
         assert (
             len(vars) == dims
         ), "The length of the vars vector must be equal to the number of dimensions"
-        vars = torch.diag(vars)
+        if distort == "increase_var":
+            vars = torch.diag(vars) * 1.1
+        else:
+            vars = torch.diag(vars)
 
     samples = torch.distributions.MultivariateNormal(means, vars).sample((n,))
     if distort == "shift_all":
@@ -288,6 +295,7 @@ def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
         idx = 0
         shift = torch.zeros(n) + 1
         samples[:, idx] = samples[:, idx] + shift
+
     return samples
 
 
