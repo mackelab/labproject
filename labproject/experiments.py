@@ -8,6 +8,7 @@ from labproject.metrics import (
 from labproject.plotting import plot_scaling_metric_dimensionality, plot_scaling_metric_sample_size
 from labproject.metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
 import pickle
+import math
 
 
 class Experiment:
@@ -34,7 +35,7 @@ class ScaleDim(Experiment):
             self.dim_sizes = list(range(min_dim, max_dim, step))
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2, dataset_size, nb_runs=5, dim_sizes=None):
+    def run_experiment(self, dataset1, dataset2, dataset_size, nb_runs=5, dim_sizes=None, **kwargs):
         final_distances = []
         final_errors = []
         n = dataset_size
@@ -46,7 +47,7 @@ class ScaleDim(Experiment):
                 # 3000 x 100
                 data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :d]
                 data2 = dataset2[torch.randperm(dataset1.size(0))[:n], :d]
-                distances.append(self.metric_fn(data1, data2))
+                distances.append(self.metric_fn(data1, data2, **kwargs))
             final_distances.append(distances)
         final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
         final_errors = (
@@ -55,7 +56,6 @@ class ScaleDim(Experiment):
             else torch.zeros_like(torch.tensor(dim_sizes))
         )
         final_distances = torch.tensor([torch.mean(d) for d in final_distances])
-        print(f"Final errors: {final_errors}")
         return dim_sizes, final_distances, final_errors
 
     def plot_experiment(
