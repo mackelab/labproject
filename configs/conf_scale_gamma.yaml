@@ -1,0 +1,19 @@
+exp_log_name: "MMD_scale_gamma" # optional but recommended
+data: ["toy_2d" , "random", "random"]
+
+experiments: ["ScaleGammaMMD", "ScaleGammaMMD", "ScaleGammaMMD"]
+dim_sizes: [10, 100]
+sample_size: [1000]
+
+n:  [1000, 1000, 1000] 
+d: [2, 10, 100]
+val_min: [0.1, 1, 1]
+val_max: [5, 20, 50]
+val_step: [10, 10, 10]
+augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
+
+seed: 0
+runs: 5
+
+
+

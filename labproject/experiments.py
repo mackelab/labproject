@@ -9,6 +9,7 @@ from labproject.plotting import plot_scaling_metric_dimensionality, plot_scaling
 from labproject.metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
 import pickle
 import math
+import numpy as np
 
 
 class Experiment:
@@ -251,3 +252,81 @@ class CIFAR10_FID_Train_Test(Experiment):
 
     def plot_experiment(self, fid_metric, dataset_name):
         pass
+
+
+class ScaleHyperparameter(Experiment):
+    def __init__(
+        self, metric_name, metric_fn, value_sizes=None, min_value=0.2, max_value=50, step=10
+    ):
+        self.metric_name = metric_name
+        self.metric_fn = metric_fn
+        if value_sizes is not None:
+            self.value_sizes = value_sizes
+        else:
+            self.value_sizes = list(np.linspace(min_value, max_value, step))
+        super().__init__()
+
+    def run_experiment(self, dataset1, dataset2, nb_runs=5, value_sizes=None, **kwargs):
+        final_distances = []
+        final_errors = []
+        n = 1000
+        if value_sizes is None:
+            value_sizes = self.value_sizes
+            # print(value_sizes)
+        for idx in range(nb_runs):
+            distances = []
+            for v in value_sizes:
+                # print(v)
+                # 3000 x 100
+                data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :]
+                data2 = dataset2[torch.randperm(dataset1.size(0))[:n], :]
+                distances.append(self.metric_fn(data1, data2, v, **kwargs))
+
+            final_distances.append(distances)
+
+        final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
+        final_errors = (
+            torch.tensor([torch.std(d) for d in final_distances])
+            if nb_runs > 1
+            else torch.zeros_like(torch.tensor(value_sizes))
+        )
+        final_distances = torch.tensor([torch.mean(d) for d in final_distances])
+        return value_sizes, final_distances, final_errors
+
+    def plot_experiment(
+        self,
+        value_sizes,
+        distances,
+        errors,
+        dataset_name,
+        ax=None,
+        color=None,
+        label=None,
+        linestyle="-",
+        **kwargs,
+    ):
+
+        plot_scaling_metric_dimensionality(
+            value_sizes,
+            distances,
+            errors,
+            self.metric_name,
+            dataset_name,
+            ax=ax,
+            color=color,
+            label=label,
+            linestyle=linestyle,
+            **kwargs,
+        )
+
+    def log_results(self, results, log_path):
+        """
+        Save the results to a file.
+        """
+        with open(log_path, "wb") as f:
+            pickle.dump(results, f)
+
+
+class ScaleGammaMMD(ScaleHyperparameter):
+    def __init__(self, **kwargs):
+        super().__init__("MMD", compute_rbf_mmd, **kwargs)
