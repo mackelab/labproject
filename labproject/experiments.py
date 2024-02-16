@@ -47,7 +47,9 @@ class ScaleDim(Experiment):
             for d in dim_sizes:
                 # 3000 x 100
                 data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :d]
-                data2 = dataset2[torch.randperm(dataset1.size(0))[:n], :d]
+                data2 = dataset2[
+                    torch.randperm(dataset2.size(0))[:n], :d
+                ]  # AS: changed from dataset1 to dataset2 in randperm
                 distances.append(self.metric_fn(data1, data2, **kwargs))
             final_distances.append(distances)
         final_distances = torch.transpose(torch.tensor(final_distances), 0, 1)
@@ -266,10 +268,10 @@ class ScaleHyperparameter(Experiment):
             self.value_sizes = list(np.linspace(min_value, max_value, step))
         super().__init__()
 
-    def run_experiment(self, dataset1, dataset2, nb_runs=5, value_sizes=None, **kwargs):
+    def run_experiment(self, dataset1, dataset2, nb_runs=5, n=10000, value_sizes=None, **kwargs):
         final_distances = []
         final_errors = []
-        n = 1000
+        # n = 1000 # AS: turned into argument
         if value_sizes is None:
             value_sizes = self.value_sizes
             # print(value_sizes)
@@ -279,7 +281,9 @@ class ScaleHyperparameter(Experiment):
                 # print(v)
                 # 3000 x 100
                 data1 = dataset1[torch.randperm(dataset1.size(0))[:n], :]
-                data2 = dataset2[torch.randperm(dataset1.size(0))[:n], :]
+                data2 = dataset2[
+                    torch.randperm(dataset2.size(0))[:n], :
+                ]  # AS: changed from dataset1 to dataset2 in randperm
                 distances.append(self.metric_fn(data1, data2, v, **kwargs))
 
             final_distances.append(distances)

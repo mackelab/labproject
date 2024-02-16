@@ -3,6 +3,7 @@ from matplotlib.patches import Rectangle
 import os
 import seaborn as sns
 import numpy as np
+from matplotlib.ticker import MaxNLocator
 
 ####
 # global plot params
@@ -33,6 +34,17 @@ color_dict = {"wasserstein": "#cc241d", "mmd": "#eebd35", "c2st": "#458588", "fi
 ####
 # plotting functions
 ###
+
+
+def ensure_zero_ytick(axis):
+    # Get current y-ticks from the axis
+    current_yticks = axis.get_yticks()
+
+    # Ensure 0 is included in y-ticks without duplication
+    if 0 not in current_yticks:
+        new_yticks = np.sort(np.append(current_yticks, 0))
+        axis.set_yticks(new_yticks)
+        axis.yaxis.set_major_locator(MaxNLocator(nbins=2))
 
 
 def cm2inch(cm, INCH=2.54):
