@@ -17,4 +17,4 @@ augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
 
 seed: 0
 runs: 5
-runs_dim: 1
+runs_dim: 5
