@@ -36,11 +36,25 @@ class FIDEmbeddingNet(EmbeddingNet):
     def get_embeddings(self, dataloader):
         embeddings = []
         for batch in dataloader:
+            if isinstance(batch, (tuple, list)):
+                batch = batch[0]
+            if isinstance(batch, dict):
+                batch = batch["image"]
+            embeddings += [get_inception_v3_activations(self.embedding_net, batch.to(self.device))]
+        embeddings = torch.cat(embeddings, dim=0)
+        return embeddings
+
+    def get_embeddings_with_labels(self, dataloader):
+        embeddings = []
+        labels = []
+        for batch in dataloader:
             embeddings += [
                 get_inception_v3_activations(self.embedding_net, batch[0].to(self.device))
             ]
+            labels += [batch[1]]
         embeddings = torch.cat(embeddings, dim=0)
-        return embeddings
+        labels = torch.cat(labels, dim=0)
+        return embeddings, labels
 
     # optional override of original methods
 
