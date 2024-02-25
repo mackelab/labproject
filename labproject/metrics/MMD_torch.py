@@ -19,6 +19,10 @@ def linear_kernel(x, y):
     return x @ y.t()
 
 
+def median_heuristic(x, y):
+    return torch.median(torch.cdist(x, y))
+
+
 @register_metric("mmd_rbf")
 def compute_rbf_mmd(x, y, bandwidth=1.0):
     x_kernel = rbf_kernel(x, x, bandwidth)
@@ -27,11 +31,12 @@ def compute_rbf_mmd(x, y, bandwidth=1.0):
     mmd = torch.mean(x_kernel) + torch.mean(y_kernel) - 2 * torch.mean(xy_kernel)
     return mmd
 
+
 @register_metric("mmd_rbf_median_heuristic")
 def compute_rbf_mmd_median_heuristic(x, y):
     # https://arxiv.org/pdf/1707.07269.pdf
-    median = torch.median(torch.cdist(x, y))
-    return compute_rbf_mmd(x, y, median)
+    bandwidth = median_heuristic(x, y)
+    return compute_rbf_mmd(x, y, bandwidth)
 
 
 @register_metric("mmd_rbf_auto")
