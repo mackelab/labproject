@@ -1,4 +1,4 @@
-exp_log_name: "embed_samplesize" # optional but recommended
+exp_log_name: "embeddings_samplesize" # optional but recommended
 data: ["imagenet_real_embeddings"]
 experiments: ["ScaleSampleSizeSW", "ScaleSampleSizeC2ST", "ScaleSampleSizeMMD", "ScaleSampleSizeFID",]
 n: [10000]
@@ -7,3 +7,4 @@ augmentation: ['imagenet_uncond_embeddings']
 
 seed: 0
 runs: 5
+bandwidth: 64 
