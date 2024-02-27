@@ -8,3 +8,4 @@ augmentation: ['imagenet_uncond_embeddings']
 seed: 0
 runs: 5
 bandwidth: 64 
+sample_sizes: [500, 1000, 2000, 4000, 6000, 8000, 10000]
