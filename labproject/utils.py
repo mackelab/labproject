@@ -49,6 +49,25 @@ def get_cfg() -> OmegaConf:
     return config
 
 
+def get_cfg_from_file(name: str) -> OmegaConf:
+    """This function returns the configuration file for the current experiment run.
+
+    The configuration file is expected to be located at ../configs/{name}.yaml .
+
+    Raises:
+        FileNotFoundError: If the configuration file is not found
+
+    Returns:
+        OmegaConf: Dictionary with the configuration parameters
+    """
+    try:
+        config = OmegaConf.load(CONF_PATH + f"/{name}.yaml")
+    except FileNotFoundError:
+        msg = f"Config file not found for {name}. Please create a config file at ../configs/{name}.yaml"
+        raise FileNotFoundError(msg)
+    return config
+
+
 def get_log_path(cfg, tag="", timestamp=True):
     """
     Get the log path for the current experiment run.
