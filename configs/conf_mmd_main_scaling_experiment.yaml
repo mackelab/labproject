@@ -1,0 +1,29 @@
+exp_log_name: "MMD_main_scaling_experiment" # optional but recommended
+
+# datasets to use
+data: ["toy_2d" , "random", "random"]
+augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
+
+# number of samples and dimensions
+n:  [1000,1000,1000] #[10000, 10000, 10000] #samples Note that for main figure 10k
+d: [2, 10, 1000] # dimensions
+
+mmd_bandwidth: [[0.5, 1, 2],[1, 3, 5],[5, 10, 40]]
+
+# sample size experiments
+experiments: ["ScaleSampleSizeMMD", "ScaleSampleSizeMMD","ScaleSampleSizeMMD"] 
+sample_size: [50, 100, 200, 500, 1000, 2000, 3000, 4000]
+runs: 5 # number of sample selection for errorbars
+
+# dimensionality experiments
+experiments_dim: ["ScaleDimMMD", "ScaleDimMMD", "ScaleDimMMD"]
+dim_sizes: [5, 10, 50, 100, 500, 1000]
+runs_dim: 5 # number of sample selection for errorbars
+
+# seed for reproducibility
+seed: 0
+
+
+# for the reduced sample size experiments
+#sample_size: [8, 10, 20, 50, 80]
+#n:  [500, 500, 500] 
