@@ -149,6 +149,7 @@ figures/
 
 # except those in docs/notebooks
 !docs/notebooks/*.ipynb
+!docs/notebooks/*/*.ipynb
 
 .idea/
 
