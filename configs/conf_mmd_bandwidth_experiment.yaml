@@ -5,7 +5,7 @@ data: ["toy_2d" , "random", "random"]
 augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
 
 # number of samples and dimensions
-n:  [1000,1000,1000] #[10000, 10000, 10000] #samples Note that for main figure 10k
+n:  [5000,5000,5000] #[10000, 10000, 10000] #samples Note that for main figure 10k
 d: [2, 10, 100]
 dim_sizes: [10, 100]
 
