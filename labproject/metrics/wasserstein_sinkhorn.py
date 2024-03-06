@@ -2,6 +2,8 @@ import torch
 import warnings
 from labproject.metrics.utils import register_metric
 
+# This implementation is adapted from https://github.com/gpeyre/SinkhornAutoDiff/blob/master/sinkhorn_pointcloud.py
+
 
 def sinkhorn_algorithm(
     x: torch.Tensor, y: torch.Tensor, epsilon: float = 1e-3, niter: int = 1000, p: int = 2

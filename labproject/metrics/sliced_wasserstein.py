@@ -1,4 +1,4 @@
-# STOLEN from Julius: https://github.com/mackelab/wasserstein_source/blob/main/wasser/sliced_wasserstein.py
+# this implementation is from https://github.com/mackelab/sourcerer/blob/main/sourcerer/sliced_wasserstein.py
 # Removed numpy dependency
 
 import torch
