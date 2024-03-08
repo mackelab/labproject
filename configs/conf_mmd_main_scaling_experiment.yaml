@@ -23,7 +23,6 @@ runs_dim: 5 # number of sample selection for errorbars
 # seed for reproducibility
 seed: 0
 
-
 # for the reduced sample size experiments
 #sample_size: [8, 10, 20, 50, 80]
 #n:  [500, 500, 500] 
