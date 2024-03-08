@@ -8,6 +8,7 @@ augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
 n: [10000,10000,10000] #samples 
 d: [2, 10, 1000] # dimensions
 
+# MMD bandwith parameter
 mmd_bandwidth: [[1,1,1], [5,5,5], [10,10,10]]
 
 # sample size experiments
@@ -22,7 +23,6 @@ runs_dim: 5 # number of sample selection for errorbars
 
 # seed for reproducibility
 seed: 0
-
 
 # for the reduced sample size experiments
 #sample_size: [8, 10, 20, 50, 80]
