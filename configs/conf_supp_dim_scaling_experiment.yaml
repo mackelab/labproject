@@ -4,11 +4,11 @@ exp_log_name: "scaling_dims" # optional but recommended
 data: ["multivariate_normal"]
 
 # number of samples and dimensions
-n: [5000]
-d: [100]
+n: [10000]
+d: [1000]
 
 # MMD bandwidth parameter
-mmd_bandwidth: [10., 20., 20.] 
+mmd_bandwidth: [10., 10., 10.] 
 
 # dimensionality scaling experiments
 experiments: ["ScaleDimSW", "ScaleDimC2ST", "ScaleDimMMD"]
