@@ -275,7 +275,7 @@ def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
         ), "The length of the means vector must be equal to the number of dimensions"
     if vars is None:
         if distort == "increase_var":
-            vars = torch.eye(dims) * 1.1
+            vars = torch.eye(dims) * 2
         else:
             vars = torch.eye(dims)
     else:
@@ -283,7 +283,7 @@ def multivariate_normal(n=3000, dims=100, means=None, vars=None, distort=None):
             len(vars) == dims
         ), "The length of the vars vector must be equal to the number of dimensions"
         if distort == "increase_var":
-            vars = torch.diag(vars) * 1.1
+            vars = torch.diag(vars) * 2
         else:
             vars = torch.diag(vars)
 

@@ -1,0 +1,22 @@
+exp_log_name: "scaling_dims" # optional but recommended
+
+# datasets to use
+data: ["multivariate_normal"]
+
+# number of samples and dimensions
+n: [5000]
+d: [100]
+
+# MMD bandwidth parameter
+mmd_bandwidth: [10., 20., 20.] 
+
+# dimensionality scaling experiments
+experiments: ["ScaleDimSW", "ScaleDimC2ST", "ScaleDimMMD"]
+dim_sizes: [5, 10, 50, 100, 500, 1000]
+runs: 5 # number of sample selection for errorbars
+distort: ["shift_one", "shift_all", "increase_var"]
+
+# seed for reproducibility
+seed: 1404
+
+

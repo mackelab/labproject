@@ -6,7 +6,6 @@ from labproject.metrics.utils import register_metric
 
 
 # Implementation taken from https://python.plainenglish.io/hungarian-algorithm-introduction-python-implementation-93e7c0890e15
-# TODO: implement fully in pytorch for differentiability
 
 
 def min_zero_row(zero_mat, mark_zero):
