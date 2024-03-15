@@ -5,13 +5,14 @@ __pycache__/
 *.pt 
 *.pkl
 *.csv
+*.pdf
 
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
-data/
+# data/
 plots/
 build/
 develop-eggs/
@@ -173,5 +174,9 @@ configs/conf_default.yaml
 configs/conf_FIDinc.yaml
 
 # ImageNet
-data/*.pt
+# data/*.pt
 data.7z
+
+# except those in data/aplications
+!data/applications/*/*.pt
+!data/applications/*.csv
