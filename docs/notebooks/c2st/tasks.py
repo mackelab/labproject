@@ -1,7 +1,7 @@
 from invoke import task
 from pathlib import Path
 
-basepath = "/Users/michaeldeistler/Documents/phd/labproject/docs/notebooks/c2st"
+basepath = ""
 
 open_cmd = "open"
 
