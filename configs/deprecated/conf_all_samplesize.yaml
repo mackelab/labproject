@@ -1,9 +1,0 @@
-exp_log_name: "all_samplesize" # optional but recommended
-data: ["toy_2d" , "random", "random"]
-experiments: ["ScaleSampleSizeSW", "ScaleSampleSizeC2ST", "ScaleSampleSizeMMD", "ScaleSampleSizeFID",]
-n: [10000, 10000, 10000]
-d: [2, 10, 10]
-augmentation: ['gauss', 'mean_shift', 'one_dim_shift']
-
-seed: 0
-runs: 5
