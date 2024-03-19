@@ -5,7 +5,9 @@ from labproject.metrics.utils import register_metric
 
 
 @register_metric("wasserstein_gauss_squared")
-def gaussian_squared_w2_distance(real_samples: Tensor, fake_samples: Tensor, real_mu=None, real_cov=None) -> Tensor:
+def gaussian_squared_w2_distance(
+    real_samples: Tensor, fake_samples: Tensor, real_mu=None, real_cov=None
+) -> Tensor:
     r"""
     Compute the squared Wasserstein distance between Gaussian approximations of real and fake samples.
     Dimensionality of the samples must be the same and >=2 (for covariance calculation).
@@ -48,16 +50,18 @@ def gaussian_squared_w2_distance(real_samples: Tensor, fake_samples: Tensor, rea
     # check input (n,d only)
     assert len(real_samples.size()) == 2, "Real samples must be 2-dimensional, (n,d)"
     assert len(fake_samples.size()) == 2, "Fake samples must be 2-dimensional, (n,d)"
-    
+
     if real_samples.shape[-1] == 1:
         mu_real = real_samples.mean(dim=0)
         var_real = real_samples.var(dim=0)
-        
+
         mu_fake = fake_samples.mean(dim=0)
         var_fake = fake_samples.var(dim=0)
-        
-        w2_squared_dist = (mu_real - mu_fake)**2 + (var_real + var_fake - 2 * (var_real * var_fake).sqrt())
-        
+
+        w2_squared_dist = (mu_real - mu_fake) ** 2 + (
+            var_real + var_fake - 2 * (var_real * var_fake).sqrt()
+        )
+
         return w2_squared_dist
     else:
         # calculate mean and covariance of real and fake samples

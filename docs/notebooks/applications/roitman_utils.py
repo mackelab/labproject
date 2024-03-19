@@ -33,7 +33,7 @@ def filter_roitman_data(
     rt = df[(df["coherence"] == coherence)]["rt"].values / 1000
 
     decision = df[(df["animal"] == animal) & (df["coherence"] == coherence)]["decision"].values
-    decision = df[ (df["coherence"] == coherence)]["decision"].values
+    decision = df[(df["coherence"] == coherence)]["decision"].values
 
     if n_trial == "all":
         mask = np.ones(len(rt), dtype=bool)
