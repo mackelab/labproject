@@ -1,3 +1,7 @@
+## Link to accompanying paper
+
+[click here to go to the arxiv document](https://arxiv.org/abs/2403.12636)
+
 
 ## Installation
 
