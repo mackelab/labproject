@@ -141,11 +141,11 @@ def calculate_cost_matrix(x, y, norm):
     if isinstance(norm, Callable):
         metric = norm
     elif isinstance(norm, int):
-        metric = lambda x, y: torch.norm(x - y, p=norm)
+        metric = lambda x, y: torch.pow(torch.norm(x - y, p=norm), norm)
     elif norm == "euclidean":
-        metric = lambda x, y: torch.norm(x - y, p=2)
+        metric = lambda x, y: torch.pow(torch.norm(x - y, p=2), 2)
     elif norm == "manhattan":
-        metric = lambda x, y: torch.norm(x - y, p=1)
+        metric = lambda x, y: torch.pow(torch.norm(x - y, p=1), 1)
     else:
         raise ValueError("norm must be a callable, an integer or 'euclidean'")
 
@@ -178,6 +178,12 @@ def kuhn_transport(
         cost_matrix, ans_pos
     )  # Get the minimum or maximum value and corresponding matrix.
     ans = torch.tensor(ans) / n
+    if isinstance(norm, int):
+        ans = torch.pow(ans, 1 / norm)
+    elif norm == "euclidean":
+        ans = torch.pow(ans, 1 / 2)
+    elif norm == "manhattan":
+        ans = ans
     transport = torch.tensor(transport) / n
     # Show the result
     return ans, transport

@@ -38,7 +38,7 @@ def sinkhorn_algorithm(
         )
 
     # Compute pairwise p-distances
-    cost_matrix = torch.cdist(x.double(), y.double(), p=p)
+    cost_matrix = torch.pow(torch.cdist(x.double(), y.double(), p=p), p)
     K = torch.exp(-cost_matrix / epsilon)
     a = torch.ones(n, dtype=torch.double) / n
     b = torch.ones(n, dtype=torch.double) / n
