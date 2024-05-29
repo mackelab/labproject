@@ -30,6 +30,14 @@ IMAGENET_CONDITIONAL_MODEL = "https://drive.google.com/uc?id=1FBVFiFcWnVs4i_LK4l
 IMAGENET_TEST_EMBEDDING = "https://drive.google.com/uc?id=12B5Nkjr611WhXUafv08BciW7nsZ20Dfc"
 IMAGENET_VALIDATION_EMBEDDING = "https://drive.google.com/uc?id=1Chc2ygs-Akw0Hlq-Nx7ykF2fp3SqV_aM"
 
+IMAGE_NET_BIGGAN = "https://drive.google.com/uc?id=1FyMLIP-r7zmT-U17df3WAPb4eTm1iyPf"
+IMAGE_NET_SDV4 = "https://drive.google.com/uc?id=1Flici8RFf9otDEnC975VL6y7a3Qairkq"
+IMAGE_NET_SDV5 = "https://drive.google.com/uc?id=1E4okQQxb93ybw5-VKp95vnjmwm1FdQ-t"
+IMAGE_NET_VQDM = "https://drive.google.com/uc?id=1AZF1a1RyDdR--jw-QHxDl6qkSg5cVw07"
+IMAGE_NET_WUKONG = "https://drive.google.com/uc?id=15t4aE8doQusqrSlZ6R25BpRSNym-Z0rm"
+IMAGE_NET_ADM = "https://drive.google.com/uc?id=1pDL49BxlUIRteJgd1YYNJUShH2KIJEFN"
+IMAGE_NET_MIDJOURNEY = "https://drive.google.com/uc?id=1bgSI5Jqc1eQbxfju31JkB3uVYLiU68nP"
+
 
 ## Hetzner Storage Box API functions ----
 
@@ -569,3 +577,174 @@ def imagenet_conditional_model(
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
 
     return conditional_embeddings[:n]
+
+
+@register_dataset("imagenet_biggan_embedding")
+def imagenet_biggan_embedding(n, d=2048, device="cpu", save_path="data"):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_biggan_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_BIGGAN, "image_net_biggan_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_biggan_embedding.pt")
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+@register_dataset("imagenet_sdv4_embedding")
+def imagenet_sdv4_embedding(n, d=2048, device="cpu", save_path="data"):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_sdv4_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_SDV4, "image_net_sdv4_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_sdv4_embedding.pt")
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+@register_dataset("imagenet_sdv5_embedding")
+def imagenet_sdv5_embedding(n, d=2048, device="cpu", save_path="data"):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_sdv5_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_SDV5, "image_net_sdv5_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_sdv5_embedding.pt")
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+@register_dataset("imagenet_vqdm_embedding")
+def imagenet_vqdm_embedding(n, d=2048, device="cpu", save_path="data"):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_vqdm_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_VQDM, "image_net_vqdm_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_vqdm_embedding.pt")
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+@register_dataset("imagenet_wukong_embedding")
+def imagenet_wukong_embedding(n, d=2048, device="cpu", save_path="data"):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_wukong_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_WUKONG, "image_net_wukong_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_wukong_embedding.pt")
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+
+@register_dataset("imagenet_adm_embedding")
+def imagenet_adm_embedding(n, d=2048, device="cpu", save_path="data"):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_adm_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_ADM, "image_net_adm_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_adm_embedding.pt")
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+
+@register_dataset("imagenet_midjourney_embedding")
+def imagenet_midjourney_embedding(n, d=2048, device="cpu", save_path="data"):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_midjourney_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_MIDJOURNEY, "image_net_midjourney_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_midjourney_embedding.pt")
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
