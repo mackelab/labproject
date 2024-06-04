@@ -4,6 +4,8 @@ from labproject.metrics import (
     gaussian_kl_divergence,
     c2st_nn,
     compute_rbf_mmd,
+    compute_linear_mmd,
+    compute_energy_mmd,
 )
 from labproject.plotting import plot_scaling_metric_dimensionality, plot_scaling_metric_sample_size
 from labproject.metrics.gaussian_squared_wasserstein import gaussian_squared_w2_distance
@@ -113,6 +115,16 @@ class ScaleDimC2ST(ScaleDim):
 class ScaleDimMMD(ScaleDim):
     def __init__(self, min_dim=2, **kwargs):
         super().__init__("MMD", compute_rbf_mmd, **kwargs)
+
+
+class ScaleDimMMDenergy(ScaleDim):
+    def __init__(self, min_dim=2, **kwargs):
+        super().__init__("MMD", compute_energy_mmd, **kwargs)
+
+
+class ScaleDimMMDlinear(ScaleDim):
+    def __init__(self, min_dim=2, **kwargs):
+        super().__init__("MMD", compute_linear_mmd, **kwargs)
 
 
 """class ScaleDimMMD(ScaleDim):
@@ -226,6 +238,20 @@ class ScaleSampleSizeMMD(ScaleSampleSize):
     def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
         super().__init__(
             "MMD", compute_rbf_mmd, min_samples=min_samples, sample_sizes=sample_sizes, **kwargs
+        )
+
+
+class ScaleSampleSizeMMDenergy(ScaleSampleSize):
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "MMD", compute_energy_mmd, min_samples=min_samples, sample_sizes=sample_sizes, **kwargs
+        )
+
+
+class ScaleSampleSizeMMDlinear(ScaleSampleSize):
+    def __init__(self, min_samples=3, sample_sizes=None, **kwargs):
+        super().__init__(
+            "MMD", compute_linear_mmd, min_samples=min_samples, sample_sizes=sample_sizes, **kwargs
         )
 
 
