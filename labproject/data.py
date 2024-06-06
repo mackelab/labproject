@@ -463,7 +463,7 @@ def imagenet_uncond_embeddings(n=1000, d=2048):
 #         raise FileNotFoundError(f"No file `data/samples_50k_unconditional_moresteps_embeddings.pt` found")
 #     data = torch.load(os.path.join(data_dir, "samples_50k_unconditional_moresteps_embeddings.pt"))
 @register_dataset("imagenet_unconditional_model_embedding")
-def imagenet_unconditional_model_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_unconditional_model_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the unconditional model embeddings for ImageNet
 
     Args:
@@ -484,6 +484,10 @@ def imagenet_unconditional_model_embedding(n, d=2048, device="cpu", save_path="d
             quiet=False,
         )
     unconditional_embeddigns = torch.load("imagenet_unconditional_model_embedding.pt")
+    
+    if permute:
+        idx = torch.randperm(unconditional_embeddigns.shape[0])
+        unconditional_embeddigns = unconditional_embeddigns[idx]
 
     max_n = unconditional_embeddigns.shape[0]
 
