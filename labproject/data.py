@@ -37,6 +37,11 @@ IMAGE_NET_VQDM = "https://drive.google.com/uc?id=1AZF1a1RyDdR--jw-QHxDl6qkSg5cVw
 IMAGE_NET_WUKONG = "https://drive.google.com/uc?id=15t4aE8doQusqrSlZ6R25BpRSNym-Z0rm"
 IMAGE_NET_ADM = "https://drive.google.com/uc?id=1pDL49BxlUIRteJgd1YYNJUShH2KIJEFN"
 IMAGE_NET_MIDJOURNEY = "https://drive.google.com/uc?id=1bgSI5Jqc1eQbxfju31JkB3uVYLiU68nP"
+IMAGE_NET_CS1STEP = "https://drive.google.com/uc?id=1fUaAPAZzq6QjwWNE1wwk4tRG4pxUK9kx"
+IMAGE_NET_CS3STEP = "https://drive.google.com/uc?id=1XatYDRV3GlDrdSqLjWbQz2WntZc8Cfmq"
+IMAGE_NET_CS10STEP = "https://drive.google.com/uc?id=1HZ-HkJQd-gknhwTKxyfTvjY-RCzEhg4L"
+IMAGE_NET_CS100STEP = "https://drive.google.com/uc?id=1oW8KNgUnLEyfL1cBhwYOujhMTJ7QHhd4"
+
 
 
 ## Hetzner Storage Box API functions ----
@@ -580,7 +585,7 @@ def imagenet_conditional_model(
 
 
 @register_dataset("imagenet_biggan_embedding")
-def imagenet_biggan_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_biggan_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the biggan generated image embeddings 
 
     Args:
@@ -596,6 +601,10 @@ def imagenet_biggan_embedding(n, d=2048, device="cpu", save_path="data"):
         import gdown
         gdown.download(IMAGE_NET_BIGGAN, "image_net_biggan_embedding.pt", quiet=False)
     test_embeddigns = torch.load("image_net_biggan_embedding.pt")
+    
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
 
     max_n = test_embeddigns.shape[0]
 
@@ -604,7 +613,7 @@ def imagenet_biggan_embedding(n, d=2048, device="cpu", save_path="data"):
     return test_embeddigns[:n]
 
 @register_dataset("imagenet_sdv4_embedding")
-def imagenet_sdv4_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_sdv4_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the biggan generated image embeddings 
 
     Args:
@@ -621,6 +630,10 @@ def imagenet_sdv4_embedding(n, d=2048, device="cpu", save_path="data"):
         gdown.download(IMAGE_NET_SDV4, "image_net_sdv4_embedding.pt", quiet=False)
     test_embeddigns = torch.load("image_net_sdv4_embedding.pt")
 
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
+
     max_n = test_embeddigns.shape[0]
 
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
@@ -628,7 +641,7 @@ def imagenet_sdv4_embedding(n, d=2048, device="cpu", save_path="data"):
     return test_embeddigns[:n]
 
 @register_dataset("imagenet_sdv5_embedding")
-def imagenet_sdv5_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_sdv5_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the biggan generated image embeddings 
 
     Args:
@@ -644,6 +657,9 @@ def imagenet_sdv5_embedding(n, d=2048, device="cpu", save_path="data"):
         import gdown
         gdown.download(IMAGE_NET_SDV5, "image_net_sdv5_embedding.pt", quiet=False)
     test_embeddigns = torch.load("image_net_sdv5_embedding.pt")
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
 
     max_n = test_embeddigns.shape[0]
 
@@ -652,7 +668,7 @@ def imagenet_sdv5_embedding(n, d=2048, device="cpu", save_path="data"):
     return test_embeddigns[:n]
 
 @register_dataset("imagenet_vqdm_embedding")
-def imagenet_vqdm_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_vqdm_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the biggan generated image embeddings 
 
     Args:
@@ -669,6 +685,9 @@ def imagenet_vqdm_embedding(n, d=2048, device="cpu", save_path="data"):
         gdown.download(IMAGE_NET_VQDM, "image_net_vqdm_embedding.pt", quiet=False)
     test_embeddigns = torch.load("image_net_vqdm_embedding.pt")
 
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
     max_n = test_embeddigns.shape[0]
 
     assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
@@ -676,7 +695,7 @@ def imagenet_vqdm_embedding(n, d=2048, device="cpu", save_path="data"):
     return test_embeddigns[:n]
 
 @register_dataset("imagenet_wukong_embedding")
-def imagenet_wukong_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_wukong_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the biggan generated image embeddings 
 
     Args:
@@ -692,6 +711,10 @@ def imagenet_wukong_embedding(n, d=2048, device="cpu", save_path="data"):
         import gdown
         gdown.download(IMAGE_NET_WUKONG, "image_net_wukong_embedding.pt", quiet=False)
     test_embeddigns = torch.load("image_net_wukong_embedding.pt")
+    
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
 
     max_n = test_embeddigns.shape[0]
 
@@ -701,7 +724,7 @@ def imagenet_wukong_embedding(n, d=2048, device="cpu", save_path="data"):
 
 
 @register_dataset("imagenet_adm_embedding")
-def imagenet_adm_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_adm_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the biggan generated image embeddings 
 
     Args:
@@ -717,6 +740,9 @@ def imagenet_adm_embedding(n, d=2048, device="cpu", save_path="data"):
         import gdown
         gdown.download(IMAGE_NET_ADM, "image_net_adm_embedding.pt", quiet=False)
     test_embeddigns = torch.load("image_net_adm_embedding.pt")
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
 
     max_n = test_embeddigns.shape[0]
 
@@ -726,7 +752,7 @@ def imagenet_adm_embedding(n, d=2048, device="cpu", save_path="data"):
 
 
 @register_dataset("imagenet_midjourney_embedding")
-def imagenet_midjourney_embedding(n, d=2048, device="cpu", save_path="data"):
+def imagenet_midjourney_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
     r"""Get the biggan generated image embeddings 
 
     Args:
@@ -742,6 +768,123 @@ def imagenet_midjourney_embedding(n, d=2048, device="cpu", save_path="data"):
         import gdown
         gdown.download(IMAGE_NET_MIDJOURNEY, "image_net_midjourney_embedding.pt", quiet=False)
     test_embeddigns = torch.load("image_net_midjourney_embedding.pt")
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+
+@register_dataset("imagenet_cs1_embedding")
+def imagenet_cs1_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_cs1_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_CS1STEP, "image_net_cs1_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_cs1_embedding.pt")
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+
+
+@register_dataset("imagenet_cs3_embedding")
+def imagenet_cs3_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_cs3_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_CS3STEP, "image_net_cs3_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_cs3_embedding.pt")
+    
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+
+
+@register_dataset("imagenet_cs10_embedding")
+def imagenet_cs10_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_cs10_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_CS10STEP, "image_net_cs10_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_cs10_embedding.pt")
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
+
+    max_n = test_embeddigns.shape[0]
+
+    assert n <= max_n, f"Requested {n} samples, but only {max_n} are available"
+
+    return test_embeddigns[:n]
+
+@register_dataset("imagenet_cs100_embedding")
+def imagenet_cs10_embedding(n, d=2048, device="cpu", save_path="data", permute=False):
+    r"""Get the biggan generated image embeddings 
+
+    Args:
+        n (int): Number of samples
+        d (int, optional): Dimensionality of the embeddings. Defaults to 2048.
+        device (str, optional): Device. Defaults to "cpu".
+
+    Returns:
+        torch.Tensor: ImageNet embeddings
+    """
+    assert d == 2048, "The dimensionality of the embeddings must be 2048"
+    if not os.path.exists("image_net_cs100_embedding.pt"):
+        import gdown
+        gdown.download(IMAGE_NET_CS100STEP, "image_net_cs100_embedding.pt", quiet=False)
+    test_embeddigns = torch.load("image_net_cs100_embedding.pt")
+    if permute:
+        idx = torch.randperm(test_embeddigns.shape[0])
+        test_embeddigns = test_embeddigns[idx]
 
     max_n = test_embeddigns.shape[0]
 
