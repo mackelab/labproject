@@ -1,0 +1,28 @@
+exp_log_name: "MMD_main_scaling_kernel_experiment" # optional but recommended
+
+# datasets to use
+data: ["toy_2d" , "random", "random"]
+augmentation: ['gauss', 'one_dim_shift', 'one_dim_shift',]
+
+# number of samples and dimensions
+n:  [10000,10000,10000] #[10000, 10000, 10000] #samples Note that for main figure 10k
+d: [2, 10, 1000] # dimensions
+
+mmd_bandwidth:  [1,5,10] # only the rbf has the bandwidth parameter
+
+# sample size experiments
+experiments: ["ScaleSampleSizeMMD", "ScaleSampleSizeMMDlinear","ScaleSampleSizeMMDenergy"] 
+sample_size: [50, 100, 200, 500, 1000, 2000, 3000, 4000]
+runs: 5 # number of sample selection for errorbars
+
+# dimensionality experiments
+experiments_dim: ["ScaleDimMMD", "ScaleDimMMDlinear", "ScaleDimMMDenergy"]
+dim_sizes: [5, 10, 50, 100, 500, 1000]
+runs_dim: 5 # number of sample selection for errorbars
+
+# seed for reproducibility
+seed: 0
+
+# for the reduced sample size experiments
+#sample_size: [8, 10, 20, 50, 80]
+#n:  [500, 500, 500] 
